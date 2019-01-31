@@ -28,7 +28,9 @@ namespace RTS_Cam
 
         private Camera playerCamera;
         private Transform m_Transform; //camera tranform
+
         public bool useFixedUpdate = false; //use FixedUpdate() or Update()
+        public Camera PlayerCamera { get { return playerCamera; } }
 
         #region Movement
 

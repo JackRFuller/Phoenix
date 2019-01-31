@@ -14,7 +14,10 @@ GameObject:
   - component: {fileID: 394480435}
   - component: {fileID: 5941728826552270827}
   - component: {fileID: 3108209732035966556}
+  - component: {fileID: 6771120976684698063}
   - component: {fileID: 394480434}
+  - component: {fileID: 7296496673561125975}
+  - component: {fileID: 7763986028872202682}
   m_Layer: 0
   m_Name: Player
   m_TagString: MainCamera
@@ -133,6 +136,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1c74cf0506c877a45b9dc0ee7564051f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &6771120976684698063
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394480432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 56a658f36f3d7444fb112ea6ebf754a9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &394480434
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,5 +204,36 @@ MonoBehaviour:
   useKeyboardRotation: 1
   rotateRightKey: 101
   rotateLeftKey: 113
-  useMouseRotation: 1
+  useMouseRotation: 0
   mouseRotationKey: 324
+--- !u!114 &7296496673561125975
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394480432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5093d35ca69f17b4085b47ec4f5f181d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  interactableLayer:
+    serializedVersion: 2
+    m_Bits: 512
+  selectionHUDObject: {fileID: 346673457204426931, guid: 45febf8a7dfbaed4fa8500a505bbefd5,
+    type: 3}
+--- !u!114 &7763986028872202682
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 394480432}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5609b9fd3ee4e314fa6563a02f4e5a39, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerUIObj: {fileID: 7468730018124347562, guid: f87c33d049258eb4398cd27381e5ba87,
+    type: 3}
