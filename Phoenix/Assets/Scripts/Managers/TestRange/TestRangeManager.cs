@@ -47,16 +47,42 @@ namespace TestRange
         public virtual void OnJoinedRoom()
         {
             Debug.Log("OnJoinedRoom");
-            SpawnInPlayer();            
+            if (PhotonNetwork.playerList.Length == 1)
+            {
+                SpawnInPlayerOneElements();
+            }
+
+            if (PhotonNetwork.playerList.Length == 2)
+            {
+                SpawnInPlayerTwoElements();
+            }
+
         }
 
         #endregion
 
-        private void SpawnInPlayer()
+        private void SpawnInPlayerOneElements()
         {
             Vector3 spawnPosition = new Vector3(-10, 7, -10);
             Quaternion spawnRotation = Quaternion.Euler(new Vector3(30, 45, 0));
             PhotonNetwork.Instantiate("Player", spawnPosition, spawnRotation, 0);
+
+            for(int i = 0; i < charactersToSpawn.Length; i++)
+            {
+                PhotonNetwork.Instantiate(charactersToSpawn[i], playerOnecharacterSpawnPoints[i].position, playerOnecharacterSpawnPoints[i].rotation,0);
+            }
+        }
+
+        private void SpawnInPlayerTwoElements()
+        {
+            Vector3 spawnPosition = new Vector3(10, 7, 10);
+            Quaternion spawnRotation = Quaternion.Euler(new Vector3(30, 225, 0));
+            PhotonNetwork.Instantiate("Player", spawnPosition, spawnRotation, 0);
+
+            for (int i = 0; i < charactersToSpawn.Length; i++)
+            {
+                PhotonNetwork.Instantiate(charactersToSpawn[i], playerTwocharacterSpawnPoints[i].position, playerTwocharacterSpawnPoints[i].rotation, 0);
+            }
         }
 
 

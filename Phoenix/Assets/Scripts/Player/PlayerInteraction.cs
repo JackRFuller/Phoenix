@@ -14,8 +14,12 @@ public class PlayerInteraction : PlayerComponent
     private CharacterView selectedCharacter;
     private Transform selectedCharacterTransform;
 
-    [Header("Selection HUD")]
+    [Header("Selection HUD Elements")]
     [SerializeField] private GameObject selectionHUDObject;
+    [SerializeField] private GameObject characterMoveHudObject;
+    private CharacterMoveHUD characterMoveHUD;
+
+    public CharacterMoveHUD GetCharacterMoveHUD { get { return characterMoveHUD; } }
 
     #region UnityMethods
 
@@ -24,7 +28,9 @@ public class PlayerInteraction : PlayerComponent
         base.Start();
 
         playerCamera = playerView.GetPlayerCamera.PlayerCamera;
+
         SetupSelectionRing();
+        SetupCharacterMoveHUD();
     }
 
     // Update is called once per frame
@@ -37,11 +43,21 @@ public class PlayerInteraction : PlayerComponent
 
     #endregion
 
+    #region PlayerInteractionHUDElements
+
     private void SetupSelectionRing()
     {
         GameObject selectionRing = Instantiate(selectionHUDObject);
         selectionRing.GetComponent<SelectionIcon>().SetupRing(this);
     }
+
+    private void SetupCharacterMoveHUD()
+    {
+        GameObject characterMove = Instantiate(characterMoveHudObject);
+        characterMoveHUD = characterMove.GetComponent<CharacterMoveHUD>();        
+    }
+
+    #endregion
 
     private void SendOutRayToFindInteractableObject()
     {
@@ -56,6 +72,9 @@ public class PlayerInteraction : PlayerComponent
                 {
                     if (hit.transform != selectedCharacterTransform || selectedCharacterTransform == null)
                     {
+                        if(selectedCharacter != null)
+                            selectedCharacter.CharacterDeselectedByPlayer();
+
                         selectedCharacterTransform = hit.transform;
                         selectedCharacter = selectedCharacterTransform.GetComponent<CharacterView>();
 
@@ -64,6 +83,7 @@ public class PlayerInteraction : PlayerComponent
                         if (PlayerSelectedCharacter != null)
                             PlayerSelectedCharacter(selectedCharacter);
                     }
+                    
                 }
             }            
         } 

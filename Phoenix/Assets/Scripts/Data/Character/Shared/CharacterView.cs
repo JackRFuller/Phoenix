@@ -5,18 +5,25 @@ using System;
 
 public class CharacterView : MonoBehaviour
 {
+    //Actions
     public event Action CharacterSelected;
-    public event Action CharacterDeselected;
+    public event Action CharacterDeselected;    
+
+    //Character Components
+    [SerializeField] private CharacterData characterData;
+    private PhotonView photonView;
+   
 
     private PlayerView playerView;
 
-    //Character Components
+    public CharacterData GetCharacterData { get { return characterData; } }
+    public PhotonView GetPhotonView { get { return photonView; } }
 
     public PlayerView GetPlayerView { get { return playerView; } }
 
     private void Awake()
     {
-       
+        photonView = GetComponent<PhotonView>();
     }
 
     public void CharacterSelectedByPlayer(PlayerView _playerView)

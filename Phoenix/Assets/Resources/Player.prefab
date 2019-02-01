@@ -69,7 +69,7 @@ Camera:
   m_Depth: 1
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 823
   m_RenderingPath: -1
   m_TargetTexture: {fileID: 0}
   m_TargetDisplay: 0
@@ -222,6 +222,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 512
   selectionHUDObject: {fileID: 346673457204426931, guid: 45febf8a7dfbaed4fa8500a505bbefd5,
+    type: 3}
+  characterMoveHudObject: {fileID: 953547877611051433, guid: 5888bf57f03ee4a42a6157afa2ae5730,
     type: 3}
 --- !u!114 &7763986028872202682
 MonoBehaviour:

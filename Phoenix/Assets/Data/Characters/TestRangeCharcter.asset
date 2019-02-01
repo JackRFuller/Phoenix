@@ -13,3 +13,4 @@ MonoBehaviour:
   m_Name: TestRangeCharcter
   m_EditorClassIdentifier: 
   characterName: Bob
+  maxMovementDistance: 10

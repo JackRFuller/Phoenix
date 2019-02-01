@@ -23,7 +23,14 @@ public class UICharacterActions : UIPlayerComponent
 
     private void CharacterSelected(CharacterView characterView)
     {
-        ShowCharacterActionButtons();
+        if(characterView.GetPhotonView.isMine)
+        {
+            ShowCharacterActionButtons();
+        }
+        else
+        {
+            HideCharacterActionButtons();
+        }
     }
 
     private void CharacterDeSelected()

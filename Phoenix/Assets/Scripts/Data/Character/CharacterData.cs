@@ -6,4 +6,7 @@ using UnityEngine;
 public class CharacterData : ScriptableObject
 {
     public string characterName;
+
+    [Header("Movement Attributes")]
+    public float maxMovementDistance;
 }
