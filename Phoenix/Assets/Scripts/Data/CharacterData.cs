@@ -9,4 +9,7 @@ public class CharacterData : ScriptableObject
 
     [Header("Movement Attributes")]
     public float maxMovementDistance;
+
+    [Header("Weapons")]
+    public RangedWeaponData rangedWeapon;
 }

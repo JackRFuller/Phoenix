@@ -40,7 +40,12 @@ public class CharacterMoveHUD : MonoBehaviour
         }
     }
 
-    private void HideHUDElements()
+    public void CharacterReachedDestination()
+    {
+        HideHUDElements();
+    }
+
+    public void HideHUDElements()
     {
         destinationSprite.enabled = false;
     }

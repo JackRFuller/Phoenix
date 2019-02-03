@@ -181,6 +181,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   moveActionObj: {fileID: 1044403684618855201}
   shootActionObj: {fileID: 8062943952523088321}
+  moveActionButton: {fileID: 2652329048741045112}
+  moveActionImage: {fileID: 8062943951868573847}
+  shootActionButtons: {fileID: 8062943952523088383}
+  shootActionImage: {fileID: 8062943952663958540}
 --- !u!1 &7468730018124347562
 GameObject:
   m_ObjectHideFlags: 0

@@ -225,6 +225,8 @@ MonoBehaviour:
     type: 3}
   characterMoveHudObject: {fileID: 953547877611051433, guid: 5888bf57f03ee4a42a6157afa2ae5730,
     type: 3}
+  characterShootHUDObject: {fileID: 3961469584654542337, guid: 4d531e0a398e84e408f80a586dbab2bf,
+    type: 3}
 --- !u!114 &7763986028872202682
 MonoBehaviour:
   m_ObjectHideFlags: 0

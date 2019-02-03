@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class PlayerInput : PlayerComponent
 {
+    public event Action PlayerCancelled;
+
     private bool selectInput;
     private bool deselectInput;
 
@@ -27,6 +30,12 @@ public class PlayerInput : PlayerComponent
 
     private void DetectDeSelectInput()
     {
-        deselectInput = Input.GetMouseButton(1);
+        deselectInput = Input.GetMouseButtonDown(1);
+
+        if(deselectInput)
+        {
+            if (PlayerCancelled != null)
+                PlayerCancelled();
+        }           
     }
 }

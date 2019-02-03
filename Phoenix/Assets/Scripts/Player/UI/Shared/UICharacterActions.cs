@@ -1,15 +1,29 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 using System;
 
 public class UICharacterActions : UIPlayerComponent
-{
+{   
     public event Action PlayerInitiatedCharacterMove;
+    public event Action PlayerInitiatedCharacterShoot;
+
+    private CharacterView characterView;
 
     [Header("Character Action Elements")]
     [SerializeField] private GameObject moveActionObj;
     [SerializeField] private GameObject shootActionObj;
+
+    [Header("Character Move Action Elements")]
+    [SerializeField] private Button moveActionButton;
+    [SerializeField] private Image moveActionImage;
+
+    [Header("Character Shoot Action Elements")]
+    [SerializeField] private Button shootActionButtons;
+    [SerializeField] private Image shootActionImage;
+
+    #region UnityMethods
 
     protected override void Start()
     {
@@ -21,11 +35,18 @@ public class UICharacterActions : UIPlayerComponent
         uiView.GetPlayerView.GetPlayerInteraction.PlayerRemovedSelectionCharacter += CharacterDeSelected;
     }
 
-    private void CharacterSelected(CharacterView characterView)
+    #endregion
+
+    private void CharacterSelected(CharacterView _characterView)
     {
+        characterView = _characterView;
+
         if(characterView.GetPhotonView.isMine)
         {
+            characterView.CharacterActionCancelledOrPerformed += UpdateCharacterActionButtons;
+
             ShowCharacterActionButtons();
+            UpdateCharacterActionButtons();
         }
         else
         {
@@ -33,8 +54,28 @@ public class UICharacterActions : UIPlayerComponent
         }
     }
 
+    private void UpdateCharacterActionButtons()
+    {
+        UpdateCharacterMovementActionButtons();
+    }
+    
+    private void UpdateCharacterMovementActionButtons()
+    {
+        if(characterView.GetCharacterMovement.HasPerformedAction)
+        {
+            moveActionButton.enabled = false;
+            moveActionImage.color = Color.grey;
+        }
+        else
+        {
+            moveActionButton.enabled = true;
+            moveActionImage.color = Color.black;
+        }
+    }
+
     private void CharacterDeSelected()
     {
+        characterView.CharacterActionCancelledOrPerformed -= UpdateCharacterActionButtons;
         HideCharacterActionButtons();
     }
 
@@ -53,16 +94,17 @@ public class UICharacterActions : UIPlayerComponent
     #region ButtonMethods
 
     public void OnButtonClickMoveCharacter()
-    {
-        Debug.Log("Intiate Character Move");
-
+    {  
         if (PlayerInitiatedCharacterMove != null)
             PlayerInitiatedCharacterMove();
     }
 
     public void OnButtonClickShootCharacter()
-    {
-        Debug.Log("Intiate Character Shoot");
+    {       
+        characterView.GetCharacterMovement.CancelAction();
+
+        if (PlayerInitiatedCharacterShoot != null)
+            PlayerInitiatedCharacterShoot();
     }
 
     #endregion

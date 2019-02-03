@@ -14,3 +14,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   characterName: Bob
   maxMovementDistance: 10
+  rangedWeapon: {fileID: 11400000, guid: 76162c6da55e1d246940c16adc5d2f4e, type: 2}

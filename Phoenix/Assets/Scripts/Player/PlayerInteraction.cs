@@ -17,9 +17,20 @@ public class PlayerInteraction : PlayerComponent
     [Header("Selection HUD Elements")]
     [SerializeField] private GameObject selectionHUDObject;
     [SerializeField] private GameObject characterMoveHudObject;
+    [SerializeField] private GameObject characterShootHUDObject;
+
     private CharacterMoveHUD characterMoveHUD;
+    private CharacterShootHUD characterShootHUD;
 
     public CharacterMoveHUD GetCharacterMoveHUD { get { return characterMoveHUD; } }
+    public CharacterShootHUD GetCharacterShootHUD { get { return characterShootHUD; } }
+
+    private PlayerInteractionState playerInteractionState = PlayerInteractionState.Enabled;
+    private enum PlayerInteractionState
+    {
+        Enabled,
+        Disabled,
+    }
 
     #region UnityMethods
 
@@ -28,17 +39,20 @@ public class PlayerInteraction : PlayerComponent
         base.Start();
 
         playerCamera = playerView.GetPlayerCamera.PlayerCamera;
+        playerView.GetPlayerInput.PlayerCancelled += RemoveSelection;
 
         SetupSelectionRing();
         SetupCharacterMoveHUD();
+        SetupCharacterShootHUD();
     }
 
     // Update is called once per frame
     void Update()
     {
-        SendOutRayToFindInteractableObject();
-
-        RemoveSelection();
+        if(playerInteractionState == PlayerInteractionState.Enabled)
+        {
+            SendOutRayToFindInteractableObject();           
+        }       
     }
 
     #endregion
@@ -57,6 +71,12 @@ public class PlayerInteraction : PlayerComponent
         characterMoveHUD = characterMove.GetComponent<CharacterMoveHUD>();        
     }
 
+    private void SetupCharacterShootHUD()
+    {
+        GameObject characterShoot = Instantiate(characterShootHUDObject);
+        characterShootHUD = characterShoot.GetComponent<CharacterShootHUD>();
+    }
+
     #endregion
 
     private void SendOutRayToFindInteractableObject()
@@ -72,36 +92,62 @@ public class PlayerInteraction : PlayerComponent
                 {
                     if (hit.transform != selectedCharacterTransform || selectedCharacterTransform == null)
                     {
-                        if(selectedCharacter != null)
-                            selectedCharacter.CharacterDeselectedByPlayer();
-
-                        selectedCharacterTransform = hit.transform;
-                        selectedCharacter = selectedCharacterTransform.GetComponent<CharacterView>();
-
-                        selectedCharacter.CharacterSelectedByPlayer(playerView);
-
-                        if (PlayerSelectedCharacter != null)
-                            PlayerSelectedCharacter(selectedCharacter);
+                        AddCharacterToSelection(hit.transform);
                     }
-                    
+                       
                 }
             }            
         } 
     }
 
-    private void RemoveSelection()
+    private void AddCharacterToSelection(Transform characterTransform)
     {
-        if(playerView.GetPlayerInput.DeselectInput)
+        if (selectedCharacter != null)
         {
-            if (selectedCharacterTransform != null)
-            {
-                selectedCharacter.CharacterDeselectedByPlayer();
-                selectedCharacterTransform = null;
-                selectedCharacter = null;
+            selectedCharacter.CharacterActionInitiated -= DisablePlayerInteraction;
+            selectedCharacter.CharacterActionCancelledOrPerformed -= EnablePlayerInteraction;
 
-                if (PlayerRemovedSelectionCharacter != null)
-                    PlayerRemovedSelectionCharacter();
-            }
-        }        
+            selectedCharacter.CharacterDeselectedByPlayer();
+        }
+
+        selectedCharacterTransform = characterTransform;
+        selectedCharacter = selectedCharacterTransform.GetComponent<CharacterView>();
+
+        selectedCharacter.CharacterSelectedByPlayer(playerView);
+
+        selectedCharacter.CharacterActionInitiated += DisablePlayerInteraction;
+        selectedCharacter.CharacterActionCancelledOrPerformed += EnablePlayerInteraction;
+
+        if (PlayerSelectedCharacter != null)
+            PlayerSelectedCharacter(selectedCharacter);        
+    }
+
+    private void RemoveSelection()
+    {        
+        if (selectedCharacterTransform != null)
+        {
+            selectedCharacter.CharacterDeselectedByPlayer();
+            selectedCharacterTransform = null;
+            selectedCharacter = null;
+
+            if (PlayerRemovedSelectionCharacter != null)
+                PlayerRemovedSelectionCharacter();
+
+            Debug.Log("Removed");
+        }             
+    }
+
+    private void DisablePlayerInteraction()
+    {
+        playerInteractionState = PlayerInteractionState.Disabled;
+        playerView.GetPlayerInput.PlayerCancelled -= RemoveSelection;
+        Debug.Log("Disabled");
+    }
+
+    private void EnablePlayerInteraction()
+    {
+        playerInteractionState = PlayerInteractionState.Enabled;
+        playerView.GetPlayerInput.PlayerCancelled += RemoveSelection;
+        Debug.Log("Enabled");
     }
 }

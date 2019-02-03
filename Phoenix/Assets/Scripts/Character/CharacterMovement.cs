@@ -4,70 +4,79 @@ using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.EventSystems;
 
-public class CharacterMovement : CharacterComponent
-{
-    private Camera playerCamera;
+public class CharacterMovement : CharacterAction
+{    
     private NavMeshAgent navMeshAgent;
     private NavMeshPath navMeshPath;
 
-    private CharacterMoveHUD characterMoveHUD;
-
-    private MovementState movementState = MovementState.Still;
-    private enum MovementState
-    {
-        Still,
-        Searching,
-        Moving,
-    }
+    private CharacterMoveHUD characterMoveHUD; 
 
     #region UnityMethods
 
     protected override void Start()
     {
-        base.Start();
-
-        characterView.CharacterSelected += CharacterSelectedByPlayer;
-        characterView.CharacterDeselected += CharacterDeselectedByPlayer;
+        base.Start();        
 
         navMeshAgent = GetComponent<NavMeshAgent>();
         navMeshPath = new NavMeshPath();
     }
 
     private void Update()
-    {
-        SearchForLocationToMoveTo();
+    {        SearchForLocationToMoveTo();
+
+        CheckIfPlayerHasReachedTheirDestination();
     }
 
     #endregion
 
     #region CharacterSelectionEvents
 
-    private void CharacterSelectedByPlayer()
+    protected override void CharacterSelectedByPlayer()
     {
-        playerCamera = characterView.GetPlayerView.GetPlayerCamera.PlayerCamera;
-
-        //Subscribe to Events
-        characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterMove += MovementIntiated;
+        base.CharacterSelectedByPlayer();
+        //Subscribe to Movement Events
+        characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterMove += IntiateAction;
     }
 
-    private void CharacterDeselectedByPlayer()
+    protected override void CharacterDeselectedByPlayer()
     {
-        characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterMove -= MovementIntiated;
+        base.CharacterDeselectedByPlayer();
+        characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterMove -= IntiateAction;
     }
 
     #endregion
 
-    private void MovementIntiated()
+    #region Character Action UI Methods
+
+    /// <summary>
+    /// Called from Character Action UI Buttons
+    /// </summary>
+    protected override void IntiateAction()
     {
+        base.IntiateAction();
+
         if (characterMoveHUD == null)
             characterMoveHUD = characterView.GetPlayerView.GetPlayerInteraction.GetCharacterMoveHUD;
 
-        movementState = MovementState.Searching;
+        actionState = ActionState.InProgress;
     }
+
+    public override void CancelAction()
+    {
+        base.CancelAction();
+
+        if (actionState == ActionState.InProgress)
+        {
+            actionState = ActionState.Finished;
+            characterMoveHUD.HideHUDElements();
+        }
+    }
+
+    #endregion
 
     private void SearchForLocationToMoveTo()
     {
-        if (movementState == MovementState.Searching)
+        if (actionState == ActionState.InProgress)
         {
             Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
             RaycastHit hit;
@@ -97,9 +106,8 @@ public class CharacterMovement : CharacterComponent
                             if (!EventSystem.current.IsPointerOverGameObject())
                             {
                                 if (characterView.GetPlayerView.GetPlayerInput.SelectInput)
-                                {
-                                   
-                                    StartCharacterMovement(hit.point);
+                                {                                   
+                                    StartCharacterMovement(hit.point);                                    
                                 }
                             }
                         }
@@ -114,8 +122,29 @@ public class CharacterMovement : CharacterComponent
 
     private void StartCharacterMovement(Vector3 _targetDestination)
     {
-        movementState = MovementState.Moving;
+        hasPerformedAction = true;
+        characterView.CancelledOrPerformedCharacterAction();
+
+        actionState = ActionState.Started;
         navMeshAgent.destination = _targetDestination;
+    }
+
+    private void CheckIfPlayerHasReachedTheirDestination()
+    {
+        if(actionState == ActionState.Started)
+        {
+            if(!navMeshAgent.pathPending)
+            {
+                if(navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
+                {
+                    if(!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
+                    {
+                        actionState = ActionState.Finished;                        
+                        characterMoveHUD.CharacterReachedDestination();
+                    }
+                }
+            }
+        }
     }
 
     private bool ReturnIfNavMeshPathIsLessThanMaxMovementDistance()
