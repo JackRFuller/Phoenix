@@ -168,11 +168,22 @@ namespace RTS_Cam
 
         #region Unity_Methods
 
+        private CameraMovementState cameraMovementState = CameraMovementState.Unlocked;
+        private enum CameraMovementState
+        {
+            Locked,
+            Unlocked,
+        }
+
         protected override void Start()
         {
             base.Start();
+
             m_Transform = transform;
             playerCamera = GetComponent<Camera>();
+
+            playerView.GetPlayerShootEvent.CombatEventBeginning += LockCameraMovement;
+            playerView.GetPlayerShootEvent.CombatEventEnded += UnlockCameraMovement;
 
             if (!playerView.GetPhotonView.isMine)
                 playerCamera.enabled = false;
@@ -180,6 +191,9 @@ namespace RTS_Cam
 
         private void Update()
         {
+            if (cameraMovementState == CameraMovementState.Locked)
+                return;
+
             if(playerView.GetPhotonView.isMine)
             {
                 if (!useFixedUpdate)
@@ -190,6 +204,9 @@ namespace RTS_Cam
 
         private void FixedUpdate()
         {
+            if (cameraMovementState == CameraMovementState.Locked)
+                return;
+
             if (playerView.GetPhotonView.isMine)
             {
                 if (useFixedUpdate)
@@ -355,5 +372,15 @@ namespace RTS_Cam
         }
 
         #endregion
+
+        private void LockCameraMovement()
+        {
+            cameraMovementState = CameraMovementState.Locked;
+        }
+
+        private void UnlockCameraMovement()
+        {
+            cameraMovementState = CameraMovementState.Unlocked;
+        }
     }
 }

@@ -7,6 +7,8 @@ namespace TestRange
 {
     public class TestRangeManager : Photon.MonoBehaviour
     {
+        private MatchManager matchManager;
+
         [Header("Character Spawn Elements")]
         [SerializeField] private string[] charactersToSpawn;
         [SerializeField] private Transform[] playerOnecharacterSpawnPoints;
@@ -59,6 +61,12 @@ namespace TestRange
 
         }
 
+        private void OnPhotonPlayerConnected(PhotonPlayer player)
+        {
+            Debug.Log("Second Player Connected");
+            StartCoroutine(WaitToTellMatchManagerToGetAllPlayers());
+        }
+
         #endregion
 
         private void SpawnInPlayerOneElements()
@@ -83,6 +91,14 @@ namespace TestRange
             {
                 PhotonNetwork.Instantiate(charactersToSpawn[i], playerTwocharacterSpawnPoints[i].position, playerTwocharacterSpawnPoints[i].rotation, 0);
             }
+
+            StartCoroutine(WaitToTellMatchManagerToGetAllPlayers());
+        }
+
+        IEnumerator WaitToTellMatchManagerToGetAllPlayers()
+        {
+            yield return new WaitForSeconds(1.0f);
+            GameManager.Instance.GetMatchManager.GetAllPlayers();
         }
 
 

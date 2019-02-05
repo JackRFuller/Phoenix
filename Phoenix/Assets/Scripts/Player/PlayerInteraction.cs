@@ -141,13 +141,11 @@ public class PlayerInteraction : PlayerComponent
     {
         playerInteractionState = PlayerInteractionState.Disabled;
         playerView.GetPlayerInput.PlayerCancelled -= RemoveSelection;
-        Debug.Log("Disabled");
     }
 
     private void EnablePlayerInteraction()
     {
         playerInteractionState = PlayerInteractionState.Enabled;
-        playerView.GetPlayerInput.PlayerCancelled += RemoveSelection;
-        Debug.Log("Enabled");
+        playerView.GetPlayerInput.PlayerCancelled += RemoveSelection;        
     }
 }

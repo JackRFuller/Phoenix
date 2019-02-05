@@ -33,6 +33,10 @@ public class UICharacterActions : UIPlayerComponent
 
         uiView.GetPlayerView.GetPlayerInteraction.PlayerSelectedCharacter += CharacterSelected;
         uiView.GetPlayerView.GetPlayerInteraction.PlayerRemovedSelectionCharacter += CharacterDeSelected;
+
+        //Subscribe to Event To Hide and Show UI During Combat
+        uiView.GetPlayerView.GetPlayerShootEvent.CombatEventBeginning += HideCharacterActionButtons;
+        uiView.GetPlayerView.GetPlayerShootEvent.CombatEventEnded += ShowCharacterActionButtons;
     }
 
     #endregion

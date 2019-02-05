@@ -1,15 +1,20 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CharacterShooting : CharacterAction
 {
+    public event Action<Transform,Transform> CharacterShootingAtTarget;
+
     private RangedWeaponData rangedWeapon;
     private CharacterShootHUD characterShootHUD;
 
     //Target
     private Transform targetCharacterTransform;
     private CharacterView targetCharacterView;
+
+    private bool hasShot = false;
 
     #region UnityMethods
 
@@ -59,6 +64,9 @@ public class CharacterShooting : CharacterAction
 
     private void SearchForTargets()
     {
+        if (hasShot)
+            return;
+
         if (actionState != ActionState.InProgress)
             return;
 
@@ -95,8 +103,13 @@ public class CharacterShooting : CharacterAction
                         {                           
                             isValidTarget = true;
                             if (characterView.GetPlayerView.GetPlayerInput.SelectInput)
-                            {
-                                Debug.Log("Player Shot");
+                            {                                
+                                TurnToFaceTarget();
+
+                                if (CharacterShootingAtTarget != null)
+                                    CharacterShootingAtTarget(transform, targetCharacterTransform);
+
+                                hasShot = true;
                             }
                         }
                     }
@@ -105,6 +118,15 @@ public class CharacterShooting : CharacterAction
         }
 
         characterShootHUD.SetShootHUDState(hitPosition, foundValidPoint, isValidTarget);
+    }
+
+    private void TurnToFaceTarget()
+    {
+        Vector3 lookAtTarget = new Vector3(targetCharacterTransform.position.x,
+                                            transform.position.y,
+                                            targetCharacterTransform.position.z);
+
+        transform.LookAt(lookAtTarget);
     }
 
     private bool ReturnIfCharacterHasLineOfSightOnTarget()

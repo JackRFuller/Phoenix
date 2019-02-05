@@ -32,6 +32,7 @@ public class CharacterView : MonoBehaviour
     {
         photonView = GetComponent<PhotonView>();
         characterMovement = GetComponent<CharacterMovement>();
+        characterShooting = GetComponent<CharacterShooting>();
     }
 
     public void CharacterSelectedByPlayer(PlayerView _playerView)
