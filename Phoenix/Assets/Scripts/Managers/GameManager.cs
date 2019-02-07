@@ -8,8 +8,12 @@ public class GameManager : MonoBehaviour
     public static GameManager Instance { get { return instance; } }
 
     private MatchManager matchManager;
+    private LobbyManager lobbyManager;
+    private LevelManager levelManager;
 
     public MatchManager GetMatchManager { get { return matchManager; } }
+    public LobbyManager GetLobbyManager { get { return lobbyManager; } }
+    public LevelManager GetLevelManager { get { return levelManager; } }
 
     private void Awake()
     {
@@ -19,5 +23,7 @@ public class GameManager : MonoBehaviour
             Destroy(gameObject);
 
         matchManager = GetComponent<MatchManager>();
+        lobbyManager = GetComponent<LobbyManager>();
+        levelManager = GetComponent<LevelManager>();
     }
 }

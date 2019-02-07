@@ -2,23 +2,54 @@
 using System.Collections.Generic;
 using UnityEngine;
 using TestRange;
+using System;
 
-public class MatchManager : MonoBehaviour
+public class MatchManager : Manager
 {
+    public event Action MatchSetup;
+
     private List<PlayerView> players;
     public List<PlayerView> Players { get { return players; } }
 
-    private void Start()
+    protected override void Start()
     {
-        players = new List<PlayerView>();
+        base.Start();
+        gameManager.GetLobbyManager.RoomFull += SetupMatch;
     }
 
-    public void GetAllPlayers()
+    private void SetupMatch()
     {
-        PlayerView[] playerViews = FindObjectsOfType<PlayerView>();
-        for(int i = 0; i < playerViews.Length; i++)
+        if (PhotonNetwork.player.IsMasterClient)
+            SetupMatchForPlayerOne();
+        else
+            SetupMatchForPlayerTwo();
+    }
+
+    private void SetupMatchForPlayerOne()
+    {
+        Transform playerSpawnPoint = gameManager.GetLevelManager.GetLevelData.playerOneSpawnPoint;
+        Transform[] characterSpawnPoints = gameManager.GetLevelManager.GetLevelData.teamOneSpawnPoints;
+        PhotonNetwork.Instantiate("Player", playerSpawnPoint.position, playerSpawnPoint.rotation, 0);
+
+        for(int i = 0; i < characterSpawnPoints.Length; i++)
         {
-            players.Add(playerViews[i]);
+            PhotonNetwork.Instantiate("Character", characterSpawnPoints[i].position, characterSpawnPoints[i].rotation, 0);
         }
+
+        MatchSetup();
+    }
+
+    private void SetupMatchForPlayerTwo()
+    {
+        Transform playerSpawnPoint = gameManager.GetLevelManager.GetLevelData.playerTwoSpawnPoint;
+        PhotonNetwork.Instantiate("Player", playerSpawnPoint.position, playerSpawnPoint.rotation, 0);
+
+        Transform[] characterSpawnPoints = gameManager.GetLevelManager.GetLevelData.teamTwoSpawnPoints;
+        for (int i = 0; i < characterSpawnPoints.Length; i++)
+        {
+            PhotonNetwork.Instantiate("Character", characterSpawnPoints[i].position, characterSpawnPoints[i].rotation, 0);
+        }
+
+        MatchSetup();
     }
 }

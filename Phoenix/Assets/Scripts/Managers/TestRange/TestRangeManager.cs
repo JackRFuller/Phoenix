@@ -98,7 +98,7 @@ namespace TestRange
         IEnumerator WaitToTellMatchManagerToGetAllPlayers()
         {
             yield return new WaitForSeconds(1.0f);
-            GameManager.Instance.GetMatchManager.GetAllPlayers();
+            //GameManager.Instance.GetMatchManager.GetAllPlayers();
         }
 
 
