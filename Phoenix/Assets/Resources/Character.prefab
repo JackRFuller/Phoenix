@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 4283220237087068064}
   - component: {fileID: 7873264017032300223}
   - component: {fileID: 4876352611197367595}
+  - component: {fileID: 269664635669206471}
   - component: {fileID: 4876352611197367594}
   - component: {fileID: 9135308451633197853}
   m_Layer: 9
@@ -192,6 +193,23 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   characterData: {fileID: 11400000, guid: beb72c4abc833174a8cb3d89105f3b08, type: 2}
+--- !u!114 &269664635669206471
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4876352611197367599}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d69e4332d820f614db3120052221448b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerOwnedMaterial: {fileID: 2100000, guid: d384caf2a5fd90f4aa92dd71d9ff9a33, type: 2}
+  opponentOwnedMaterial: {fileID: 2100000, guid: 48d7ed13f3c38194aa1d109b92ec9d28,
+    type: 2}
+  selectedMaterial: {fileID: 2100000, guid: 2c381c393e636ca4b902854154afaafb, type: 2}
+  characterBase: {fileID: 4881826675709751295}
 --- !u!114 &4876352611197367594
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -605,6 +623,12 @@ PrefabInstance:
 --- !u!4 &4881826675707456799 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 400000, guid: be1ab16e72026b9488109bfa1ac211fd,
+    type: 3}
+  m_PrefabInstance: {fileID: 4881826675707852703}
+  m_PrefabAsset: {fileID: 0}
+--- !u!23 &4881826675709751295 stripped
+MeshRenderer:
+  m_CorrespondingSourceObject: {fileID: 2300000, guid: be1ab16e72026b9488109bfa1ac211fd,
     type: 3}
   m_PrefabInstance: {fileID: 4881826675707852703}
   m_PrefabAsset: {fileID: 0}

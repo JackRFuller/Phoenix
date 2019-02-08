@@ -7,6 +7,7 @@ using System;
 public class MatchManager : Manager
 {
     public event Action MatchSetup;
+    public event Action<string> MatchMessage;
 
     private List<PlayerView> players;
     public List<PlayerView> Players { get { return players; } }
@@ -19,6 +20,8 @@ public class MatchManager : Manager
 
     private void SetupMatch()
     {
+        TriggerMatchMessage("Starting Match");
+
         if (PhotonNetwork.player.IsMasterClient)
             SetupMatchForPlayerOne();
         else
@@ -51,5 +54,11 @@ public class MatchManager : Manager
         }
 
         MatchSetup();
+    }
+
+    public void TriggerMatchMessage(string matchMessage)
+    {
+        if (MatchMessage != null)
+            MatchMessage(matchMessage);
     }
 }

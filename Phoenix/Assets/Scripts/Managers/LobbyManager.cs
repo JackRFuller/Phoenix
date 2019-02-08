@@ -9,6 +9,7 @@ using System;
 public class LobbyManager : Manager
 {
     public event Action ClientConnectedToRoom;
+    public event Action ClientConnectedToEmptyRoom;
     public event Action OpponentConnectedToRoom;
     public event Action RoomFull;
 
@@ -39,13 +40,17 @@ public class LobbyManager : Manager
     }
 
     public void OnJoinedRoom()
-    {
-        Debug.Log("Connected To Room");
+    {   
         if (ClientConnectedToRoom != null)
             ClientConnectedToRoom();
 
         if (ReturnIfRoomIsFullWithPlayers())
             RoomFull();
+        else
+        {
+            if (ClientConnectedToEmptyRoom != null)
+                ClientConnectedToEmptyRoom();
+        }
     }
 
     public void OnPhotonPlayerConnected(PhotonPlayer player)

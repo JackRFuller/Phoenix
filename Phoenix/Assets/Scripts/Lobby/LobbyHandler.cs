@@ -5,19 +5,27 @@ using UnityEngine;
 public class LobbyHandler : MonoBehaviour
 {
     [Header("Lobby Elements")]
-    [SerializeField] private GameObject lobbyCanvasObj;
+    [SerializeField] private GameObject playerNameInputObj;
+    [SerializeField] private GameObject playerConnectButtonObj;
     [SerializeField] private GameObject lobbyCameraObj;
+    [SerializeField] private GameObject lobbyWaitingForPlayersObj;
 
     // Start is called before the first frame update
     void Start()
     {
         GameManager.Instance.GetLobbyManager.ClientConnectedToRoom += HideLobbyCanvas;
+        GameManager.Instance.GetLobbyManager.ClientConnectedToEmptyRoom += ShowWaitingForPlayersMessage;
+
         GameManager.Instance.GetMatchManager.MatchSetup += TurnOffLobbyCamera;
+        GameManager.Instance.GetMatchManager.MatchSetup += HideWaitingForPlayersMessage;
+
+        HideWaitingForPlayersMessage();
     }
 
     private void HideLobbyCanvas()
     {
-        lobbyCanvasObj.SetActive(false);
+        playerNameInputObj.SetActive(false);
+        playerConnectButtonObj.SetActive(false);
     }
 
     private void TurnOffLobbyCamera()
@@ -25,5 +33,14 @@ public class LobbyHandler : MonoBehaviour
         lobbyCameraObj.SetActive(false);
     }
 
+    private void ShowWaitingForPlayersMessage()
+    {
+        lobbyWaitingForPlayersObj.SetActive(true);
+    }
+
+    private void HideWaitingForPlayersMessage()
+    {
+        lobbyWaitingForPlayersObj.SetActive(false);
+    }
     
 }
