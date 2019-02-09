@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
 using Photon;
+using UnityEngine.UI;
 
 public class UIMatchCanvas : Photon.MonoBehaviour
 {
@@ -10,13 +11,22 @@ public class UIMatchCanvas : Photon.MonoBehaviour
     [SerializeField] private TMP_Text playerNameText;
     [SerializeField] private TMP_Text opponentNameText;
 
+    [Header("Player Turn IDs")]
+    [SerializeField] private Image localPlayerTurnImage;
+    [SerializeField] private Image opponentPlayerTurnImage;
+
     private void Start()
     {
         GameManager.Instance.GetLobbyManager.ClientConnectedToRoom += DisplayPlayerNames;
         GameManager.Instance.GetLobbyManager.OpponentConnectedToRoom += DisplayPlayerNames;
 
+        GameManager.Instance.GetTurnManager.UpdateToPlayerTurn += PlayerTurnUpdate;
+
         playerNameText.text = "";
         opponentNameText.text = "";
+
+        localPlayerTurnImage.enabled = false;
+        opponentPlayerTurnImage.enabled = false;
     }
 
     private void DisplayPlayerNames()
@@ -45,6 +55,20 @@ public class UIMatchCanvas : Photon.MonoBehaviour
                 }
             }
         }            
+    }
+
+    private void PlayerTurnUpdate(int playerTurnID)
+    {
+        if(playerTurnID == 0)
+        {
+            localPlayerTurnImage.enabled = true;
+            opponentPlayerTurnImage.enabled = false;
+        }
+        else
+        {
+            localPlayerTurnImage.enabled = false;
+            opponentPlayerTurnImage.enabled = true;
+        }
     }
 
 

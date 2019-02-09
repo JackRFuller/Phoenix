@@ -31,4 +31,9 @@ public class PlayerView : MonoBehaviour
         playerShootEvent = GetComponent<PlayerShootEvent>();
         playerUI = GetComponent<PlayerUI>();       
     }
+
+    private void Start()
+    {
+        GameManager.Instance.GetMatchManager.RecievePlayers(this);
+    }
 }

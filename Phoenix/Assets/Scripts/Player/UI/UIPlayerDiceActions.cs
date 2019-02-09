@@ -17,12 +17,14 @@ public class UIPlayerDiceActions : UIPlayerComponent
     protected override void Start()
     {
         base.Start();
+
         SetDiceButtonDelegate();
         HideAllUIElements();
 
         //Subscribe to Event To Hide and Show UI During Combat
-        uiView.GetPlayerView.GetPlayerShootEvent.CombatEventBeginning += EnableAllUIElements;
-        uiView.GetPlayerView.GetPlayerShootEvent.CombatEventEnded += HideAllUIElements;
+        uiView.GetPlayerView.GetPlayerDiceRoller.DiceEventSetup += EnableAllUIElements;
+
+        Debug.Log("UI Setup");
     } 
    
     private void SetDiceButtonDelegate()

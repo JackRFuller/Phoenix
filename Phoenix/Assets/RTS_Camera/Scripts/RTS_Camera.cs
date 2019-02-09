@@ -374,6 +374,15 @@ namespace RTS_Cam
 
         #endregion
 
+        [PunRPC]
+        public void LockCameraToSpecificPosition(Vector3 cameraPosition, Vector3 cameraRotation)
+        {
+            transform.position = cameraPosition;
+            transform.rotation = Quaternion.Euler(cameraRotation);
+
+            LockCameraMovement();
+        }
+
         private void LockCameraMovement()
         {
             cameraMovementState = CameraMovementState.Locked;

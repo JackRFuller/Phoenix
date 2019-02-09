@@ -14,6 +14,7 @@ public class LobbyManager : Manager
     public event Action RoomFull;
 
     [SerializeField] private int requiredNumberOfPlayers = 2;
+    public int RequiredNumberOfPlayers { get { return requiredNumberOfPlayers; } }
 
     // Start is called before the first frame update
     protected override void Start()

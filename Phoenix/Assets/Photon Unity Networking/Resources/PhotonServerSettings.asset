@@ -44,4 +44,8 @@ MonoBehaviour:
   - RequestForPickupTimes
   - TaggedPlayer
   - ShootingEventStarting
+  - LockCameraToSpecificPosition
+  - RollDice
+  - RecieveDiceRolls
+  - ResetDice
   DisableAutoOpenWizard: 1

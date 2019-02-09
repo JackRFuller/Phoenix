@@ -4,30 +4,101 @@ using UnityEngine;
 
 public class Dice : MonoBehaviour
 {
+    private DICEState diceState = DICEState.Static;
+
+    private PhotonView photonView;
+
     private Transform diceTransform;
     private Rigidbody diceRB;
+    private MeshRenderer diceMesh;
+    private Collider diceCollider;
+
+    [Header("Dice Materials")]
+    [SerializeField] private Material clientDiceMaterial;
+    [SerializeField] private Material opponentDiceMaterial;
+    
+    public PhotonView GetPhotonView { get { return photonView; } }
+
+    private enum DICEState
+    {
+        Rolled,
+        Static,
+    }
 
     // Start is called before the first frame update
     void Start()
     {
+        photonView = GetComponent<PhotonView>();
+
+        diceCollider = GetComponent<Collider>();
         diceTransform = GetComponent<Transform>();
         diceRB = GetComponent<Rigidbody>();
+        diceMesh = GetComponentInChildren<MeshRenderer>();
+
+        DisableDice();
+        SetupDice();
+    }
+
+    private void SetupDice()
+    {        
+        diceMesh.material = photonView.isMine ? clientDiceMaterial : opponentDiceMaterial;
     }
 
     private void FixedUpdate()
     {
-        //GetDiceValue();
+        if(photonView.isMine)
+        {
+            if (diceState == DICEState.Rolled)
+            {
+                GetDiceValue();
+            }
+        }       
     }
 
     private void GetDiceValue()
     {
         if (diceRB.velocity == Vector3.zero)
-            Debug.Log(ReturnDiceValue());
-    }   
+        {
+            int diceValue = ReturnDiceValue();
+            diceState = DICEState.Static;
 
-    private float ReturnDiceValue()
+            for(int i =0; i < GameManager.Instance.GetMatchManager.Players.Count; i++)
+            {
+                GameManager.Instance.GetMatchManager.Players[i].GetPhotonView.RPC("RecieveDiceRolls",PhotonTargets.All, diceValue);
+            }
+        }
+    }
+
+    [PunRPC]
+    public void RollDice(Vector3 spawnPosition)
     {
-        float diceValue = 0;
+        ShowDice();
+
+        if(photonView.isMine)
+        {
+            transform.position = spawnPosition;
+
+            EnableDice();
+
+            Vector3 rollDirection = PhotonNetwork.isMasterClient ? -transform.right : transform.right;
+
+            //Generate Random Speed
+            diceRB.AddForce(rollDirection * Random.Range(3, 12), ForceMode.Impulse);
+            diceRB.AddTorque(rollDirection * Random.Range(3, 12), ForceMode.Impulse);
+
+            StartCoroutine(WaitForHalfASecondBeforeCheckingDICERoll());
+        }
+    }
+
+    IEnumerator WaitForHalfASecondBeforeCheckingDICERoll()
+    {
+        yield return new WaitForSeconds(0.5f);
+        diceState = DICEState.Rolled;
+    }
+
+    private int ReturnDiceValue()
+    {
+        int diceValue = 0;
 
         if (Vector3.Dot(diceTransform.forward, Vector3.up) > 0.6f)
             diceValue = 1;
@@ -43,5 +114,36 @@ public class Dice : MonoBehaviour
             diceValue = 3;
 
         return diceValue;
+    }
+
+    [PunRPC]
+    public void ResetDice()
+    {
+        DisableDice();
+    }
+
+    private void EnableDice()
+    {
+        diceCollider.enabled = true;
+        diceRB.isKinematic = false;
+        ShowDice();    
+    }
+
+    private void DisableDice()
+    {
+        diceRB.isKinematic = true;
+        diceRB.velocity = Vector3.zero;      
+        diceCollider.enabled = false;
+        HideDice();
+    }
+
+    private void ShowDice()
+    {
+        diceMesh.enabled = true;
+    }
+
+    private void HideDice()
+    {
+        diceMesh.enabled = false;
     }
 }

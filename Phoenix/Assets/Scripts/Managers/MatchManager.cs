@@ -9,6 +9,9 @@ public class MatchManager : Manager
     public event Action MatchSetup;
     public event Action<string> MatchMessage;
 
+    private PlayerView localPlayer;
+    public PlayerView LocalPlayer { get { return localPlayer; } }
+
     private List<PlayerView> players;
     public List<PlayerView> Players { get { return players; } }
 
@@ -16,12 +19,12 @@ public class MatchManager : Manager
     {
         base.Start();
         gameManager.GetLobbyManager.RoomFull += SetupMatch;
+
+        players = new List<PlayerView>();
     }
 
     private void SetupMatch()
     {
-        TriggerMatchMessage("Starting Match");
-
         if (PhotonNetwork.player.IsMasterClient)
             SetupMatchForPlayerOne();
         else
@@ -38,8 +41,6 @@ public class MatchManager : Manager
         {
             PhotonNetwork.Instantiate("Character", characterSpawnPoints[i].position, characterSpawnPoints[i].rotation, 0);
         }
-
-        MatchSetup();
     }
 
     private void SetupMatchForPlayerTwo()
@@ -52,13 +53,34 @@ public class MatchManager : Manager
         {
             PhotonNetwork.Instantiate("Character", characterSpawnPoints[i].position, characterSpawnPoints[i].rotation, 0);
         }
-
-        MatchSetup();
     }
 
     public void TriggerMatchMessage(string matchMessage)
     {
         if (MatchMessage != null)
             MatchMessage(matchMessage);
+    }
+
+    public void RecievePlayers(PlayerView player)
+    {
+        players.Add(player);
+
+        if(player.GetPhotonView.isMine)
+            localPlayer = player;
+
+        //Check if we have both players
+        if (players.Count == gameManager.GetLobbyManager.RequiredNumberOfPlayers)
+        {
+            StartCoroutine(WaitToStartMatch());
+        }
+    }
+
+    //Temp / find a better way to sort out / used to make sure all components have been cached
+    IEnumerator WaitToStartMatch()
+    {
+        yield return new WaitForSeconds(2.0f);
+
+        if (MatchSetup != null)
+            MatchSetup();
     }
 }

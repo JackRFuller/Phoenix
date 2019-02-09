@@ -6,6 +6,10 @@ public class Level : MonoBehaviour
 {
     [SerializeField] private LevelData levelData;
 
+    [Header("Priority Positions")]
+    public Transform prioritySpotOne;
+    public Transform prioritySpotTwo;
+
     [Header("Team One")]
     public Transform playerOneSpawnPoint;
     public Transform[] teamOneSpawnPoints;

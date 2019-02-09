@@ -13,9 +13,12 @@ public class PlayerUI : PlayerComponent
     {
         base.Start();
 
-        GameObject ui = Instantiate(playerUIObj);
-        ui.GetComponent<UIPlayerView>().SetupPlayerUI(playerView);
+        if(playerView.GetPhotonView.isMine)
+        {
+            GameObject ui = Instantiate(playerUIObj);
+            ui.GetComponent<UIPlayerView>().SetupPlayerUI(playerView);
 
-        uiPlayerView = ui.GetComponent<UIPlayerView>();
+            uiPlayerView = ui.GetComponent<UIPlayerView>();
+        }
     }
 }
