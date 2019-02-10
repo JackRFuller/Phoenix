@@ -238,7 +238,7 @@ a4f0a4f62100f1a4fb5cbe0e00dde83f Unity.TextMeshPro.dll:TMPro.TextMeshProUGUI
 b2bb76abcdb06a896b8d35b5731adadb Assembly-CSharp.dll:.PlayerInteraction
 d251bf88db6c95a6b1aa0b69298da9ef UnityEngine.SpatialTracking.dll:UnityEngine.SpatialTracking.TrackedPoseDriver
 71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.GameManager
-2218d25abdff8db2f92627f330c0f780 Assembly-CSharp.dll:.UIMatchCanvas
+1b410b32152a9a86d4564d40d1def16f Assembly-CSharp.dll:.UIMatchCanvas
 a3e7c082af780d91b5e07a2be1e4556a Assembly-CSharp.dll:.LobbyManager
 c5fd97cc10b89deaf7c60af66a6b0d5a Assembly-CSharp.dll:.SupportLogger
 71bb6a6b6c8f052f948db64c7dd3ca4f Assembly-CSharp.dll:.UIMatchMessage

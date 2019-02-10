@@ -48,4 +48,5 @@ MonoBehaviour:
   - RollDice
   - RecieveDiceRolls
   - ResetDice
+  - UpdateTurnAndPhase
   DisableAutoOpenWizard: 1

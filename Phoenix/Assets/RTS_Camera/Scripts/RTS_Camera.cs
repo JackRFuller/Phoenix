@@ -388,7 +388,7 @@ namespace RTS_Cam
             cameraMovementState = CameraMovementState.Locked;
         }
 
-        private void UnlockCameraMovement()
+        public void UnlockCameraMovement()
         {
             cameraMovementState = CameraMovementState.Unlocked;
         }

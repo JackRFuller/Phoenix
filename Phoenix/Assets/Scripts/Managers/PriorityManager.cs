@@ -36,34 +36,54 @@ public class PriorityManager : Manager
 
     private void CompareDiceResults(List<int> localPlayerDiceRolls, List<int> opponentDiceRolls)
     {
-        string winnerName = null;
+      
 
-        int winnerIndex = 0;
-
-        if(localPlayerDiceRolls[0] > opponentDiceRolls[0])
+        if(localPlayerDiceRolls[0] != opponentDiceRolls[0])
         {
-            winnerName = PhotonNetwork.player.NickName;            
-        }
-        else if(localPlayerDiceRolls[0] < opponentDiceRolls[0])
-        {
-            winnerIndex = 1;
+            string winnerName = null;
+            int winnerIndex = 0;
 
-            for (int i = 0; i < PhotonNetwork.playerList.Length;i++)
+            if (localPlayerDiceRolls[0] > opponentDiceRolls[0])
             {
-                if(PhotonNetwork.playerList[i] != PhotonNetwork.player)
+                winnerName = PhotonNetwork.player.NickName;
+            }
+            else if (localPlayerDiceRolls[0] < opponentDiceRolls[0])
+            {
+                winnerIndex = 1;
+
+                for (int i = 0; i < PhotonNetwork.playerList.Length; i++)
                 {
-                    winnerName = PhotonNetwork.playerList[i].NickName;
-                    break;
+                    if (PhotonNetwork.playerList[i] != PhotonNetwork.player)
+                    {
+                        winnerName = PhotonNetwork.playerList[i].NickName;
+                        break;
+                    }
                 }
             }
+
+            string winnerMessage = $"{winnerName} Wins Priority. {winnerName} Goes First";
+            EndPriorityPhase(winnerMessage, winnerIndex);
+        }
+        else
+        {
+            gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.ResetDice();
+            gameManager.GetMatchManager.TriggerMatchMessage("Draw! Re-roll");
+            gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.SetupDiceRoll(1);
         }
 
-        string winnerMessage = $"{winnerName} Wins Priority. {winnerName} Goes First";
+       
+
+      
+        
+    }
+
+    private void EndPriorityPhase(string winnerMessage, int winnerIndex)
+    {
         gameManager.GetMatchManager.TriggerMatchMessage(winnerMessage);
 
         gameManager.GetTurnManager.SetPlayerWhoWinsPriority(winnerIndex);
-
         gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.ResetDice();
+        gameManager.GetMatchManager.LocalPlayer.GetPlayerCamera.UnlockCameraMovement();
     }
 
     

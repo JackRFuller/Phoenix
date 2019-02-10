@@ -65,7 +65,7 @@ public class UICharacterActions : UIPlayerComponent
     
     private void UpdateCharacterMovementActionButtons()
     {
-        if(characterView.GetCharacterMovement.HasPerformedAction)
+        if(characterView.GetCharacterMovement.HasPerformedAction || !TurnManager.IsPlayersTurn())
         {
             moveActionButton.enabled = false;
             moveActionImage.color = Color.grey;

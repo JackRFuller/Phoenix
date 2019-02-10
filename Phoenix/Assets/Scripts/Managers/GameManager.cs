@@ -7,11 +7,13 @@ public class GameManager : MonoBehaviour
     private static GameManager instance;
     public static GameManager Instance { get { return instance; } }
 
+    private PhotonView photonView;
     private MatchManager matchManager;
     private LobbyManager lobbyManager;
     private LevelManager levelManager;
     private TurnManager turnManager;
 
+    public PhotonView GetPhotonView { get { return photonView; } }
     public MatchManager GetMatchManager { get { return matchManager; } }
     public LobbyManager GetLobbyManager { get { return lobbyManager; } }
     public LevelManager GetLevelManager { get { return levelManager; } }
@@ -24,6 +26,7 @@ public class GameManager : MonoBehaviour
         else
             Destroy(gameObject);
 
+        photonView = GetComponent<PhotonView>();
         matchManager = GetComponent<MatchManager>();
         lobbyManager = GetComponent<LobbyManager>();
         levelManager = GetComponent<LevelManager>();

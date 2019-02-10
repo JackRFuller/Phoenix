@@ -23,8 +23,7 @@ public class UIPlayerDiceActions : UIPlayerComponent
 
         //Subscribe to Event To Hide and Show UI During Combat
         uiView.GetPlayerView.GetPlayerDiceRoller.DiceEventSetup += EnableAllUIElements;
-
-        Debug.Log("UI Setup");
+        uiView.GetPlayerView.GetPlayerDiceRoller.PlayerRolledDice += HideAllUIElements;
     } 
    
     private void SetDiceButtonDelegate()

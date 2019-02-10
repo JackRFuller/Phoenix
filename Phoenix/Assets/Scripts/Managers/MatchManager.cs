@@ -15,6 +15,12 @@ public class MatchManager : Manager
     private List<PlayerView> players;
     public List<PlayerView> Players { get { return players; } }
 
+    private string localPlayerName;
+    private string opponentName;
+
+    public string LocalPlayerName { get { return localPlayerName; } }
+    public string OpponentName { get { return opponentName; } }
+
     protected override void Start()
     {
         base.Start();
@@ -66,11 +72,26 @@ public class MatchManager : Manager
         players.Add(player);
 
         if(player.GetPhotonView.isMine)
-            localPlayer = player;
+        {
+            localPlayer = player;            
+        }            
 
         //Check if we have both players
         if (players.Count == gameManager.GetLobbyManager.RequiredNumberOfPlayers)
         {
+            //Set Player Names
+            for(int i =0; i < players.Count; i++)
+            {
+                if (PhotonNetwork.playerList[i].IsLocal)
+                {
+                    localPlayerName = PhotonNetwork.playerList[i].NickName;
+                }
+                else
+                {
+                    opponentName = PhotonNetwork.playerList[i].NickName;
+                }
+            }
+
             StartCoroutine(WaitToStartMatch());
         }
     }

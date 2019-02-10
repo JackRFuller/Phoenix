@@ -15,11 +15,20 @@ public class UIMatchCanvas : Photon.MonoBehaviour
     [SerializeField] private Image localPlayerTurnImage;
     [SerializeField] private Image opponentPlayerTurnImage;
 
+    [Header("Turn Button Elements")]
+    [SerializeField] private Image endTurnButtonImage;
+    [SerializeField] private Button endTurnButton;
+    [SerializeField] private TMP_Text endTurnButtonText;
+
+    private string localPlayerName;
+    private string opponentName;
+
     private void Start()
     {
         GameManager.Instance.GetLobbyManager.ClientConnectedToRoom += DisplayPlayerNames;
         GameManager.Instance.GetLobbyManager.OpponentConnectedToRoom += DisplayPlayerNames;
 
+        GameManager.Instance.GetTurnManager.PriorityPhaseInitiated += PriorityPhase;
         GameManager.Instance.GetTurnManager.UpdateToPlayerTurn += PlayerTurnUpdate;
 
         playerNameText.text = "";
@@ -27,17 +36,35 @@ public class UIMatchCanvas : Photon.MonoBehaviour
 
         localPlayerTurnImage.enabled = false;
         opponentPlayerTurnImage.enabled = false;
+
+        endTurnButton.enabled = false;
+        endTurnButtonImage.enabled = false;
+        endTurnButtonText.text = "";
+
+        SetEndTurnButtonDelegate();
+    }
+
+    private void SetEndTurnButtonDelegate()
+    {
+        endTurnButton.onClick.AddListener(delegate { GameManager.Instance.GetTurnManager.EndPlayersActionTurn(); });
+    }
+
+    private void PriorityPhase()
+    {
+        endTurnButtonText.color = Color.white;
+        endTurnButton.enabled = false;
+        endTurnButtonImage.enabled = false;
+        endTurnButtonText.text = "Priority Phase";
     }
 
     private void DisplayPlayerNames()
     {
-        string playerName = PhotonNetwork.player.NickName;
+         localPlayerName = PhotonNetwork.player.NickName;
 
-        if (string.IsNullOrEmpty(playerName))
-            playerName = "Player One";
+        if (string.IsNullOrEmpty(localPlayerName))
+            localPlayerName = "Player One";
 
-        playerNameText.text = playerName;
-
+        playerNameText.text = localPlayerName;
 
         if(PhotonNetwork.playerList.Length == 2)
         {
@@ -45,10 +72,10 @@ public class UIMatchCanvas : Photon.MonoBehaviour
             {
                 if(PhotonNetwork.playerList[i] != PhotonNetwork.player)
                 {
-                    string opponentName = PhotonNetwork.playerList[i].NickName;
+                    opponentName = PhotonNetwork.playerList[i].NickName;
 
                     if (string.IsNullOrEmpty(opponentName))
-                        playerName = "Player Two";
+                        opponentName = "Player Two";
 
                     opponentNameText.text = opponentName;
                     break;
@@ -59,15 +86,28 @@ public class UIMatchCanvas : Photon.MonoBehaviour
 
     private void PlayerTurnUpdate(int playerTurnID)
     {
-        if(playerTurnID == 0)
+        if(TurnManager.GetTurnPhase == TurnManager.TurnPhase.Action)
         {
-            localPlayerTurnImage.enabled = true;
-            opponentPlayerTurnImage.enabled = false;
-        }
-        else
-        {
-            localPlayerTurnImage.enabled = false;
-            opponentPlayerTurnImage.enabled = true;
+            if (playerTurnID == 0)
+            {
+                localPlayerTurnImage.enabled = true;
+                opponentPlayerTurnImage.enabled = false;
+
+                endTurnButton.enabled = true;
+                endTurnButtonImage.enabled = true;
+                endTurnButtonText.text = "End Your Action Turn";
+                endTurnButtonText.color = Color.black;
+            }
+            else
+            {
+                localPlayerTurnImage.enabled = false;
+                opponentPlayerTurnImage.enabled = true;
+
+                endTurnButtonText.color = Color.white;
+                endTurnButton.enabled = false;
+                endTurnButtonImage.enabled = false;
+                endTurnButtonText.text = $"Action Phase - {opponentName}";
+            }
         }
     }
 

@@ -6,6 +6,7 @@ using System;
 public class PlayerDiceRoller : PlayerComponent
 {
     public event Action DiceEventSetup;
+    public event Action PlayerRolledDice;
     public event Action<List<int>, List<int>> DiceRolled;
 
     private List<Dice> playerDice;
@@ -40,6 +41,9 @@ public class PlayerDiceRoller : PlayerComponent
 
     public void SetupDiceRoll(int _numberOfDiceToRoll)
     {
+        localPlayerDiceRolls.Clear();
+        opponentDiceRoll.Clear();
+
         numberOfDiceToRoll = _numberOfDiceToRoll;
 
         if(DiceEventSetup != null)
@@ -53,7 +57,7 @@ public class PlayerDiceRoller : PlayerComponent
 
     private IEnumerator WaitToCleanUpDice()
     {
-        yield return new WaitForSeconds(1.0f);
+        yield return new WaitForSeconds(0.5f);
         for (int i = 0; i < playerDice.Count; i++)
         {
             playerDice[i].GetPhotonView.RPC("ResetDice", PhotonTargets.All);
@@ -74,15 +78,16 @@ public class PlayerDiceRoller : PlayerComponent
             {
                 if (hit.collider.CompareTag("Terrain"))
                 {
-                    Debug.Log("Found Ground");
                     Vector3 diceSpawnPosition = new Vector3(hit.point.x, hit.point.y + 1, hit.point.z);
 
                     playerDice[i].GetPhotonView.RPC("RollDice", PhotonTargets.All, diceSpawnPosition);                   
                 }
             }
-
             screenSpawnPosition = new Vector2(screenSpawnPosition.x, screenSpawnPosition.y + 0.075f);
         }
+
+        if (PlayerRolledDice != null)
+            PlayerRolledDice();
     }
 
     [PunRPC]
@@ -96,23 +101,7 @@ public class PlayerDiceRoller : PlayerComponent
         {
             opponentDiceRoll.Add(diceRoll);
         }
-
-        if(localPlayerDiceRolls.Count == numberOfDiceToRoll)
-        {
-            for(int i =0; i < localPlayerDiceRolls.Count; i++)
-            {
-                Debug.Log(localPlayerDiceRolls[i]);                
-            }
-        }
-
-        if (opponentDiceRoll.Count == numberOfDiceToRoll)
-        {
-            for (int i = 0; i < opponentDiceRoll.Count; i++)
-            {
-                Debug.Log(opponentDiceRoll[i]);
-            }
-        }
-
+        
         if(localPlayerDiceRolls.Count == numberOfDiceToRoll && opponentDiceRoll.Count == numberOfDiceToRoll)
         {
             if (DiceRolled != null)
