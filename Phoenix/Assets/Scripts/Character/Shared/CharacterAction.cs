@@ -1,9 +1,12 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System;
 
 public class CharacterAction : CharacterComponent
 {
+    public event Action CharacterActionPerformed;
+
     protected Camera playerCamera;
 
     protected bool hasPerformedAction;
@@ -47,5 +50,13 @@ public class CharacterAction : CharacterComponent
         {
             characterView.CancelledOrPerformedCharacterAction();
         }        
+    }
+
+    protected virtual void ActionCompleted()
+    {
+        hasPerformedAction = true;
+
+        if (CharacterActionPerformed != null)
+            CharacterActionPerformed();
     }
 }

@@ -5,7 +5,7 @@ using System;
 
 public class CharacterShooting : CharacterAction
 {
-    public event Action<Transform,Transform> CharacterShootingAtTarget;
+    public event Action<CharacterView,CharacterView> CharacterShootingAtTarget;
 
     private RangedWeaponData rangedWeapon;
     private CharacterShootHUD characterShootHUD;
@@ -102,14 +102,17 @@ public class CharacterShooting : CharacterAction
                         if (ReturnIfCharacterIsInRange())
                         {                           
                             isValidTarget = true;
+
                             if (characterView.GetPlayerView.GetPlayerInput.SelectInput)
                             {                                
                                 TurnToFaceTarget();
 
                                 if (CharacterShootingAtTarget != null)
-                                    CharacterShootingAtTarget(transform, targetCharacterTransform);
+                                    CharacterShootingAtTarget(characterView, targetCharacterView);
 
                                 hasShot = true;
+
+                                ActionCompleted();
                             }
                         }
                     }
@@ -118,6 +121,11 @@ public class CharacterShooting : CharacterAction
         }
 
         characterShootHUD.SetShootHUDState(hitPosition, foundValidPoint, isValidTarget);
+    }
+
+    private void PlayerPerformedAction()
+    {
+        hasPerformedAction = true;
     }
 
     private void TurnToFaceTarget()

@@ -30,14 +30,12 @@ public class PriorityManager : Manager
         gameManager.GetMatchManager.LocalPlayer.GetPlayerCamera.LockCameraToSpecificPosition(priorityPosition.position, priorityPosition.eulerAngles);
         gameManager.GetMatchManager.TriggerMatchMessage("Roll For Priority");
 
-        gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.SetupDiceRoll(1);
+        gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.SetupDiceRoll(1,1);
         gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.DiceRolled += CompareDiceResults;
     }
 
     private void CompareDiceResults(List<int> localPlayerDiceRolls, List<int> opponentDiceRolls)
-    {
-      
-
+    { 
         if(localPlayerDiceRolls[0] != opponentDiceRolls[0])
         {
             string winnerName = null;
@@ -65,16 +63,10 @@ public class PriorityManager : Manager
             EndPriorityPhase(winnerMessage, winnerIndex);
         }
         else
-        {
-            gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.ResetDice();
+        {          
             gameManager.GetMatchManager.TriggerMatchMessage("Draw! Re-roll");
-            gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.SetupDiceRoll(1);
-        }
-
-       
-
-      
-        
+            gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.SetupDiceRoll(1,1);
+        }        
     }
 
     private void EndPriorityPhase(string winnerMessage, int winnerIndex)
@@ -83,7 +75,11 @@ public class PriorityManager : Manager
 
         gameManager.GetTurnManager.SetPlayerWhoWinsPriority(winnerIndex);
         gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.ResetDice();
-        gameManager.GetMatchManager.LocalPlayer.GetPlayerCamera.UnlockCameraMovement();
+
+        Vector3 targetPosition = PhotonNetwork.isMasterClient ? gameManager.GetLevelManager.GetLevelData.playerOneSpawnPoint.position : gameManager.GetLevelManager.GetLevelData.playerTwoSpawnPoint.position;
+
+        gameManager.GetMatchManager.LocalPlayer.GetPlayerCamera.InitiateMovementToPosition(targetPosition);
+        gameManager.GetMatchManager.LocalPlayer.GetPlayerDiceRoller.DiceRolled -= CompareDiceResults;
     }
 
     

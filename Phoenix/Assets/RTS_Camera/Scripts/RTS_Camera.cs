@@ -26,6 +26,8 @@ namespace RTS_Cam
 
         #endregion
 
+        private LerpingClasses.Vector3Lerping vector3Lerping;
+
         private Camera playerCamera;
         private Transform m_Transform; //camera tranform
 
@@ -187,30 +189,37 @@ namespace RTS_Cam
 
             if (!playerView.GetPhotonView.isMine)
                 playerCamera.enabled = false;
+
+            vector3Lerping = new LerpingClasses.Vector3Lerping();
         }
 
         private void Update()
         {
-            if (cameraMovementState == CameraMovementState.Locked)
-                return;
-
-            if(playerView.GetPhotonView.isMine)
+            if (cameraMovementState != CameraMovementState.Locked)
             {
-                if (!useFixedUpdate)
-                    CameraUpdate();
+                if (playerView.GetPhotonView.isMine)
+                {
+                    if (!useFixedUpdate)
+                        CameraUpdate();
+                }
+            }
+
+            if (vector3Lerping.isLerping)
+            {
+                MoveCameraToPosition();
             }
             
         }
 
         private void FixedUpdate()
         {
-            if (cameraMovementState == CameraMovementState.Locked)
-                return;
-
-            if (playerView.GetPhotonView.isMine)
+            if (cameraMovementState != CameraMovementState.Locked)
             {
-                if (useFixedUpdate)
-                    CameraUpdate();
+                if (playerView.GetPhotonView.isMine)
+                {
+                    if (useFixedUpdate)
+                        CameraUpdate();
+                }
             }
         }
 
@@ -373,6 +382,37 @@ namespace RTS_Cam
         }
 
         #endregion
+
+        public void InitiateMovementToPosition(Vector3 targetPosition)
+        {
+            LockCameraMovement();
+
+            vector3Lerping = new LerpingClasses.Vector3Lerping();
+
+            vector3Lerping.startPosition = transform.position;
+            vector3Lerping.targetPosition = targetPosition;
+
+            vector3Lerping.timeStartedLerping = Time.time;
+            vector3Lerping.isLerping = true;
+
+            Cursor.lockState = CursorLockMode.Locked;
+            Cursor.visible = false;
+        }
+
+        private void MoveCameraToPosition()
+        {
+            transform.position = vector3Lerping.ReturnLerpingPosition();
+
+            if(vector3Lerping.percentageComplete >= 1.0f)
+            {
+                vector3Lerping.isLerping = false;
+                UnlockCameraMovement();
+
+                Cursor.lockState = CursorLockMode.None;
+                Cursor.visible = true;
+            }
+        }
+
 
         [PunRPC]
         public void LockCameraToSpecificPosition(Vector3 cameraPosition, Vector3 cameraRotation)

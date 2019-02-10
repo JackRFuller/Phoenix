@@ -10,6 +10,16 @@ public class CharacterData : ScriptableObject
     [Header("Movement Attributes")]
     public float maxMovementDistance;
 
+    [Header("Combat Attributes")]
+    [Range(1,5)]
+    public int handToHandSkill;
+    [Range(1, 5)]
+    public int shootingSkill;
+    [Range(1, 10)]
+    public int strength;
+    [Range(1, 10)]
+    public int defense;
+
     [Header("Weapons")]
     public RangedWeaponData rangedWeapon;
 }

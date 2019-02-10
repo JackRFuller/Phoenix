@@ -47,7 +47,8 @@ public class UICharacterActions : UIPlayerComponent
 
         if(characterView.GetPhotonView.isMine)
         {
-            characterView.CharacterActionCancelledOrPerformed += UpdateCharacterActionButtons;
+            characterView.GetCharacterMovement.CharacterActionPerformed += UpdateCharacterActionButtons;
+            characterView.GetCharacterShooting.CharacterActionPerformed += UpdateCharacterActionButtons;
 
             ShowCharacterActionButtons();
             UpdateCharacterActionButtons();
@@ -58,9 +59,18 @@ public class UICharacterActions : UIPlayerComponent
         }
     }
 
+    private void CharacterDeSelected()
+    {
+        characterView.CharacterActionCancelledOrPerformed -= UpdateCharacterActionButtons;
+        characterView.GetCharacterShooting.CharacterActionPerformed -= UpdateCharacterActionButtons;
+
+        HideCharacterActionButtons();
+    }
+
     private void UpdateCharacterActionButtons()
     {
         UpdateCharacterMovementActionButtons();
+        UpdateCharacterShootingActionButtons();
     }
     
     private void UpdateCharacterMovementActionButtons()
@@ -77,12 +87,20 @@ public class UICharacterActions : UIPlayerComponent
         }
     }
 
-    private void CharacterDeSelected()
+    private void UpdateCharacterShootingActionButtons()
     {
-        characterView.CharacterActionCancelledOrPerformed -= UpdateCharacterActionButtons;
-        HideCharacterActionButtons();
+        if (characterView.GetCharacterShooting.HasPerformedAction || !TurnManager.IsPlayersTurn())
+        {
+            shootActionButtons.enabled = false;
+            shootActionImage.color = Color.grey;
+        }
+        else
+        {
+            shootActionButtons.enabled = true;
+            shootActionImage.color = Color.black;
+        }
     }
-
+   
     private void ShowCharacterActionButtons()
     {
         moveActionObj.SetActive(true);

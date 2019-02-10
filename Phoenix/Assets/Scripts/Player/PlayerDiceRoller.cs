@@ -10,7 +10,9 @@ public class PlayerDiceRoller : PlayerComponent
     public event Action<List<int>, List<int>> DiceRolled;
 
     private List<Dice> playerDice;
-    private int numberOfDiceToRoll;
+
+    private int numberOfLocalPlayerDiceToRoll;
+    private int numberOfOpponentDiceToRoll;
 
     //Dice Rolls
     private List<int> localPlayerDiceRolls;
@@ -39,12 +41,13 @@ public class PlayerDiceRoller : PlayerComponent
         }
     }
 
-    public void SetupDiceRoll(int _numberOfDiceToRoll)
+    public void SetupDiceRoll(int _numberOfPlayerDiceToRoll, int _numberofOpponentDiceToRoll)
     {
         localPlayerDiceRolls.Clear();
         opponentDiceRoll.Clear();
 
-        numberOfDiceToRoll = _numberOfDiceToRoll;
+        numberOfLocalPlayerDiceToRoll = _numberOfPlayerDiceToRoll;
+        numberOfOpponentDiceToRoll = _numberofOpponentDiceToRoll;
 
         if(DiceEventSetup != null)
             DiceEventSetup();
@@ -57,7 +60,7 @@ public class PlayerDiceRoller : PlayerComponent
 
     private IEnumerator WaitToCleanUpDice()
     {
-        yield return new WaitForSeconds(0.5f);
+        yield return new WaitForSeconds(1.0f);
         for (int i = 0; i < playerDice.Count; i++)
         {
             playerDice[i].GetPhotonView.RPC("ResetDice", PhotonTargets.All);
@@ -68,7 +71,7 @@ public class PlayerDiceRoller : PlayerComponent
     {        
         Vector2 screenSpawnPosition = new Vector2(0.6f,0.3f);
 
-        for(int i = 0; i < numberOfDiceToRoll; i++)
+        for(int i = 0; i < numberOfLocalPlayerDiceToRoll; i++)
         {
             //Determine SpawnPoint
             Ray ray = playerView.GetPlayerCamera.PlayerCamera.ViewportPointToRay(screenSpawnPosition);
@@ -102,11 +105,12 @@ public class PlayerDiceRoller : PlayerComponent
             opponentDiceRoll.Add(diceRoll);
         }
         
-        if(localPlayerDiceRolls.Count == numberOfDiceToRoll && opponentDiceRoll.Count == numberOfDiceToRoll)
+        if(localPlayerDiceRolls.Count == numberOfLocalPlayerDiceToRoll && opponentDiceRoll.Count == numberOfOpponentDiceToRoll)
         {
             if (DiceRolled != null)
             {
                 DiceRolled(localPlayerDiceRolls, opponentDiceRoll);
+                ResetDice();
             }
         }
 

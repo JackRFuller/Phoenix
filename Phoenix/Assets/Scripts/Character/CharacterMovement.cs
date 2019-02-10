@@ -34,6 +34,7 @@ public class CharacterMovement : CharacterAction
     protected override void CharacterSelectedByPlayer()
     {
         base.CharacterSelectedByPlayer();
+
         //Subscribe to Movement Events
         characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterMove += IntiateAction;
     }
@@ -107,7 +108,8 @@ public class CharacterMovement : CharacterAction
                             {
                                 if (characterView.GetPlayerView.GetPlayerInput.SelectInput)
                                 {                                   
-                                    StartCharacterMovement(hit.point);                                    
+                                    StartCharacterMovement(hit.point);
+                                    ActionCompleted();
                                 }
                             }
                         }

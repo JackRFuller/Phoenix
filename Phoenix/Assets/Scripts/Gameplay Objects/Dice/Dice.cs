@@ -125,14 +125,15 @@ public class Dice : MonoBehaviour
     private void EnableDice()
     {
         diceCollider.enabled = true;
-        diceRB.isKinematic = false;
+        diceRB.useGravity = true;
         ShowDice();    
     }
 
     private void DisableDice()
     {
-        diceRB.isKinematic = true;
-        diceRB.velocity = Vector3.zero;      
+        diceRB.useGravity = false;
+        diceRB.velocity = Vector3.zero;
+        diceRB.angularVelocity = Vector3.zero;
         diceCollider.enabled = false;
         HideDice();
     }

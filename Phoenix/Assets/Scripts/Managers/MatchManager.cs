@@ -7,7 +7,7 @@ using System;
 public class MatchManager : Manager
 {
     public event Action MatchSetup;
-    public event Action<string> MatchMessage;
+    public event Action<string> MatchMessage;    
 
     private PlayerView localPlayer;
     public PlayerView LocalPlayer { get { return localPlayer; } }
@@ -59,6 +59,17 @@ public class MatchManager : Manager
         {
             PhotonNetwork.Instantiate("Character", characterSpawnPoints[i].position, characterSpawnPoints[i].rotation, 0);
         }
+    }
+
+    public void TriggerMatchMessageForBothPlayers(string matchMessage)
+    {        
+        photonView.RPC("SendMatchMessageToAllPlayers", PhotonTargets.All, matchMessage);        
+    }
+
+    [PunRPC]
+    private void SendMatchMessageToAllPlayers(string matchMessage)
+    {
+        TriggerMatchMessage(matchMessage);
     }
 
     public void TriggerMatchMessage(string matchMessage)

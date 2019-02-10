@@ -4,26 +4,88 @@ using UnityEngine;
 
 public class PlayerShootEvent : PlayerCombatEvent
 {
+    private CharacterView localCharacter;
+    private CharacterView opponentCharacter;
+
+    private string localCharacterName;
+    private string opponentCharacterName;
+
+    private ShootingPhase shootingPhase;
+    private enum ShootingPhase
+    {
+        ShootingToHit,
+        ShootingToWound,
+    }
+
     protected override void OnCharacterSelected(CharacterView _characterView)
     {
         base.OnCharacterSelected(_characterView);
-        characterView.GetCharacterShooting.CharacterShootingAtTarget += InitiateShootingEvent;
+        characterView.GetCharacterShooting.CharacterShootingAtTarget += StartShooingEvent;
     }
 
     protected override void OnCharacterDeSelected()
     {
-        characterView.GetCharacterShooting.CharacterShootingAtTarget -= InitiateShootingEvent;
+        characterView.GetCharacterShooting.CharacterShootingAtTarget -= StartShooingEvent;
         base.OnCharacterDeSelected();
     }
 
-    private void InitiateShootingEvent(Transform playerCharacter, Transform targetCharacter)
+    private void StartShooingEvent(CharacterView _localCharacter, CharacterView _opponentCHaracter)
     {
-        //Set all Player Cameras to Focus on Shooting Event
-        //Temp - Need to Redo       
-        for (int playerIndex = 0; playerIndex < GameManager.Instance.GetMatchManager.Players.Count; playerIndex++)
+        localCharacter = _localCharacter;
+        opponentCharacter = _opponentCHaracter;
+
+        //Signal Events
+        localCharacterName = localCharacter.GetCharacterData.characterName;
+        opponentCharacterName = opponentCharacter.GetCharacterData.characterName;
+
+        GameManager.Instance.GetMatchManager.TriggerMatchMessageForBothPlayers($"{localCharacterName} Rolling to Hit {opponentCharacterName}");
+                
+        //Setup Event
+        playerView.GetPlayerDiceRoller.DiceRolled += GetDiceResults;
+
+        //Setup Dice
+        playerView.GetPlayerDiceRoller.SetupDiceRoll(1,0);
+    }  
+
+    private void GetDiceResults(List<int> playerDiceRolls, List<int> opponentDiceRolls)
+    {
+        if(shootingPhase == ShootingPhase.ShootingToHit)
         {
-            GameManager.Instance.GetMatchManager.Players[playerIndex].GetPhotonView.RPC("ShootingEventStarting", PhotonTargets.All, playerCharacter.position, targetCharacter.position);
+            ShootingHitPhase(playerDiceRolls);
         }
+        else if(shootingPhase == ShootingPhase.ShootingToWound)
+        {
+            if(DidCharacterCauseAWound(playerDiceRolls))
+            {
+
+            }
+            else
+            {
+
+            }
+        }
+    }  
+
+    private void ShootingHitPhase(List<int> playerDiceRolls)
+    {
+        //Calculate if we hit
+        if (DidCharacterHit(playerDiceRolls))
+        {
+            SetupShootingToWoundPhase();
+        }
+        else
+        {
+            GameManager.Instance.GetMatchManager.TriggerMatchMessageForBothPlayers($"{localCharacterName} Failed To Hit");
+        }
+    }
+
+    private void SetupShootingToWoundPhase()
+    {
+        int diceRollNeeded = WoundChart.ValueNeededToCauseAWound(opponentCharacter.GetCharacterData.defense, localCharacter.GetCharacterData.strength);
+        GameManager.Instance.GetMatchManager.TriggerMatchMessageForBothPlayers($"HIT! {diceRollNeeded}+ Needed to Wound");
+
+        shootingPhase = ShootingPhase.ShootingToWound;
+        playerView.GetPlayerDiceRoller.SetupDiceRoll(1, 0);
     }
 
     [PunRPC]
@@ -65,5 +127,35 @@ public class PlayerShootEvent : PlayerCombatEvent
 
         Debug.Log(gameObject.name + ": Position Camera");
     }
+
+    #region Dice Roll Calculations
+
+    private bool DidCharacterHit(List<int> playerDiceRolls)
+    {
+        if(playerDiceRolls[0] >= 6 - localCharacter.GetCharacterData.shootingSkill)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private bool DidCharacterCauseAWound(List<int> playerDiceRolls)
+    {
+        int valueNeededToWound = WoundChart.ValueNeededToCauseAWound(opponentCharacter.GetCharacterData.defense, localCharacter.GetCharacterData.strength);
+
+        if (playerDiceRolls[0] >= valueNeededToWound)
+        {
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    #endregion
 
 }
