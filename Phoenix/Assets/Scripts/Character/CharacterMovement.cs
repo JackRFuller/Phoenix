@@ -22,7 +22,8 @@ public class CharacterMovement : CharacterAction
     }
 
     private void Update()
-    {        SearchForLocationToMoveTo();
+    {
+        SearchForLocationToMoveTo();
 
         CheckIfPlayerHasReachedTheirDestination();
     }
@@ -77,6 +78,9 @@ public class CharacterMovement : CharacterAction
 
     private void SearchForLocationToMoveTo()
     {
+        if (hasPerformedAction)
+            return;
+
         if (actionState == ActionState.InProgress)
         {
             Ray ray = playerCamera.ScreenPointToRay(Input.mousePosition);
@@ -108,8 +112,7 @@ public class CharacterMovement : CharacterAction
                             {
                                 if (characterView.GetPlayerView.GetPlayerInput.SelectInput)
                                 {                                   
-                                    StartCharacterMovement(hit.point);
-                                    ActionCompleted();
+                                    StartCharacterMovement(hit.point);                                    
                                 }
                             }
                         }
@@ -129,6 +132,9 @@ public class CharacterMovement : CharacterAction
 
         actionState = ActionState.Started;
         navMeshAgent.destination = _targetDestination;
+
+        MatchManager.SendBattleLogMessage(BattleLogMessage.movement, $"{characterView.GetCharacterData.characterName}: {transform.position} to {_targetDestination}");
+        ActionCompleted();
     }
 
     private void CheckIfPlayerHasReachedTheirDestination()

@@ -52,4 +52,5 @@ MonoBehaviour:
   - SignalShootingEvent
   - SendMatchMessage
   - SendMatchMessageToAllPlayers
+  - UpdateBattleLog
   DisableAutoOpenWizard: 1

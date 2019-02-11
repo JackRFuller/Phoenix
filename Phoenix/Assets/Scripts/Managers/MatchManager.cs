@@ -7,7 +7,8 @@ using System;
 public class MatchManager : Manager
 {
     public event Action MatchSetup;
-    public event Action<string> MatchMessage;    
+    public event Action<string> MatchMessage;
+    public event Action<int, string> BattleLogMessage;
 
     private PlayerView localPlayer;
     public PlayerView LocalPlayer { get { return localPlayer; } }
@@ -115,4 +116,24 @@ public class MatchManager : Manager
         if (MatchSetup != null)
             MatchSetup();
     }
+
+    #region BattleLog
+
+    
+    public static void SendBattleLogMessage(int messageType, string message)
+    {
+        GameManager.Instance.GetPhotonView.RPC("UpdateBattleLog", PhotonTargets.All, messageType, message);
+    }
+
+    [PunRPC]
+    public void UpdateBattleLog(int messageType, string message)
+    {
+        Debug.Log(message);
+
+        if (BattleLogMessage != null)
+            BattleLogMessage(messageType, message);
+    }
+
+
+    #endregion
 }

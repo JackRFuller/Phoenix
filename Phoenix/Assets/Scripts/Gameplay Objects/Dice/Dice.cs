@@ -62,6 +62,8 @@ public class Dice : MonoBehaviour
             int diceValue = ReturnDiceValue();
             diceState = DICEState.Static;
 
+            MatchManager.SendBattleLogMessage(BattleLogMessage.diceRoll, $"{GameManager.Instance.GetMatchManager.LocalPlayerName} Rolled a {diceValue}");
+
             for(int i =0; i < GameManager.Instance.GetMatchManager.Players.Count; i++)
             {
                 GameManager.Instance.GetMatchManager.Players[i].GetPhotonView.RPC("RecieveDiceRolls",PhotonTargets.All, diceValue);
