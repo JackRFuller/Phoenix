@@ -53,4 +53,5 @@ MonoBehaviour:
   - SendMatchMessage
   - SendMatchMessageToAllPlayers
   - UpdateBattleLog
+  - RemoveHealth
   DisableAutoOpenWizard: 1

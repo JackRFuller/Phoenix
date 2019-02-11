@@ -7,6 +7,10 @@ public class CharacterData : ScriptableObject
 {
     public string characterName;
 
+    [Header("Health")]
+    [Range(1, 10)]
+    public int hitPoints;
+
     [Header("Movement Attributes")]
     public float maxMovementDistance;
 
@@ -22,4 +26,7 @@ public class CharacterData : ScriptableObject
 
     [Header("Weapons")]
     public RangedWeaponData rangedWeapon;
+
+    [Header("Animation")]
+    public RuntimeAnimatorController characterAnimator;
 }

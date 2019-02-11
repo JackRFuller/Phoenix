@@ -13,9 +13,11 @@ MonoBehaviour:
   m_Name: TestRangeCharcter
   m_EditorClassIdentifier: 
   characterName: Bob
+  hitPoints: 0
   maxMovementDistance: 10
   handToHandSkill: 2
   shootingSkill: 2
   strength: 3
   defense: 4
   rangedWeapon: {fileID: 11400000, guid: 76162c6da55e1d246940c16adc5d2f4e, type: 2}
+  characterAnimator: {fileID: 9100000, guid: 95b386152691d094e9b645459c038239, type: 2}
