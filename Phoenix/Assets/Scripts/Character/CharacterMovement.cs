@@ -23,9 +23,15 @@ public class CharacterMovement : CharacterAction
 
     private void Update()
     {
-        SearchForLocationToMoveTo();
-
-        CheckIfPlayerHasReachedTheirDestination();
+        if(actionState == ActionState.InProgress)
+        {
+            SearchForLocationToMoveTo();
+            CancelAction();
+        }
+        if(actionState == ActionState.Started)
+        {
+            CheckIfPlayerHasReachedTheirDestination();
+        }    
     }
 
     #endregion
@@ -35,7 +41,6 @@ public class CharacterMovement : CharacterAction
     protected override void CharacterSelectedByPlayer()
     {
         base.CharacterSelectedByPlayer();
-
         //Subscribe to Movement Events
         characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterMove += IntiateAction;
     }
@@ -65,13 +70,16 @@ public class CharacterMovement : CharacterAction
 
     public override void CancelAction()
     {
-        base.CancelAction();
-
-        if (actionState == ActionState.InProgress)
+        if(Input.GetMouseButtonDown(1))
         {
-            actionState = ActionState.Finished;
-            characterMoveHUD.HideHUDElements();
-        }
+            base.CancelAction();
+
+            if (actionState == ActionState.InProgress)
+            {
+                actionState = ActionState.Finished;
+                characterMoveHUD.HideHUDElements();
+            }
+        }        
     }
 
     #endregion
@@ -94,9 +102,7 @@ public class CharacterMovement : CharacterAction
                 if (hit.collider.CompareTag("Terrain"))
                 {
                     //Calculate Path
-                    NavMesh.CalculatePath(transform.position, hit.point, NavMesh.AllAreas, navMeshPath);
-
-                    foundPath = true;
+                    NavMesh.CalculatePath(transform.position, hit.point, NavMesh.AllAreas, navMeshPath);                   
 
                     //Debug
                     for (int i = 0; i < navMeshPath.corners.Length - 1; i++)
@@ -105,9 +111,12 @@ public class CharacterMovement : CharacterAction
                     //Check if its less than max movement distance
                     if (navMeshPath.status != NavMeshPathStatus.PathInvalid)
                     {
+                        foundPath = true;
+
                         if (ReturnIfNavMeshPathIsLessThanMaxMovementDistance())
                         {
                             validPath = true;
+
                             if (!EventSystem.current.IsPointerOverGameObject())
                             {
                                 if (characterView.GetPlayerView.GetPlayerInput.SelectInput)
@@ -140,15 +149,15 @@ public class CharacterMovement : CharacterAction
     private void CheckIfPlayerHasReachedTheirDestination()
     {
         if(actionState == ActionState.Started)
-        {
+        {           
             if(!navMeshAgent.pathPending)
             {
                 if(navMeshAgent.remainingDistance <= navMeshAgent.stoppingDistance)
-                {
+                {                    
                     if(!navMeshAgent.hasPath || navMeshAgent.velocity.sqrMagnitude == 0f)
                     {
                         actionState = ActionState.Finished;                        
-                        characterMoveHUD.CharacterReachedDestination();
+                        characterMoveHUD.HideHUDElements();                       
                     }
                 }
             }

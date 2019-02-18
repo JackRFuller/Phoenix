@@ -30,8 +30,7 @@ public class CharacterAction : CharacterComponent
 
     protected virtual void CharacterSelectedByPlayer()
     {
-        playerCamera = characterView.GetPlayerView.GetPlayerCamera.PlayerCamera;
-        characterView.GetPlayerView.GetPlayerInput.PlayerCancelled += CancelAction;
+        playerCamera = characterView.GetPlayerView.GetPlayerCamera.PlayerCamera;     
     }
 
     protected virtual void CharacterDeselectedByPlayer()

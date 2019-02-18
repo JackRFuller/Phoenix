@@ -30,6 +30,7 @@ public class UIMatchCanvas : Photon.MonoBehaviour
 
         GameManager.Instance.GetTurnManager.PriorityPhaseInitiated += PriorityPhase;
         GameManager.Instance.GetTurnManager.UpdateToPlayerTurn += PlayerTurnUpdate;
+        GameManager.Instance.GetTurnManager.CombatPhaseInitiated += CombatPhaseInitiated;
 
         playerNameText.text = "";
         opponentNameText.text = "";
@@ -46,7 +47,7 @@ public class UIMatchCanvas : Photon.MonoBehaviour
 
     private void SetEndTurnButtonDelegate()
     {
-        endTurnButton.onClick.AddListener(delegate { GameManager.Instance.GetTurnManager.EndPlayersActionTurn(); });
+        endTurnButton.onClick.AddListener(delegate { GameManager.Instance.GetTurnManager.EndPlayersTurn(); });
     }
 
     private void PriorityPhase()
@@ -86,16 +87,19 @@ public class UIMatchCanvas : Photon.MonoBehaviour
 
     private void PlayerTurnUpdate(int playerTurnID)
     {
-        if(TurnManager.GetTurnPhase == TurnManager.TurnPhase.Action)
+        if(TurnManager.GetTurnPhase == TurnManager.TurnPhase.Shooting || TurnManager.GetTurnPhase == TurnManager.TurnPhase.Movement)
         {
+            string phaseType = TurnManager.GetTurnPhase == TurnManager.TurnPhase.Movement ? "Movement" : "Shooting";
+
             if (playerTurnID == 0)
             {
                 localPlayerTurnImage.enabled = true;
                 opponentPlayerTurnImage.enabled = false;
 
                 endTurnButton.enabled = true;
-                endTurnButtonImage.enabled = true;
-                endTurnButtonText.text = "End Your Action Turn";
+                endTurnButtonImage.enabled = true;               
+
+                endTurnButtonText.text = $"End Your {phaseType} Turn";
                 endTurnButtonText.color = Color.black;
             }
             else
@@ -106,9 +110,17 @@ public class UIMatchCanvas : Photon.MonoBehaviour
                 endTurnButtonText.color = Color.white;
                 endTurnButton.enabled = false;
                 endTurnButtonImage.enabled = false;
-                endTurnButtonText.text = $"Action Phase - {opponentName}";
+                endTurnButtonText.text = $"{phaseType} Phase - {opponentName}";
             }
         }
+    }
+
+    private void CombatPhaseInitiated()
+    {
+        endTurnButtonText.color = Color.white;
+        endTurnButton.enabled = false;
+        endTurnButtonImage.enabled = false;
+        endTurnButtonText.text = "Combat Phase";
     }
 
 

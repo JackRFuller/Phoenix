@@ -5,10 +5,13 @@ using System;
 
 public class TurnManager : Manager
 {
+    [Header("Debug Controls")]
+    [SerializeField] private bool startWithPriority;
+
     public event Action PriorityPhaseInitiated;
     public event Action<int> UpdateToPlayerTurn;
+    public event Action CombatPhaseInitiated;
 
-    public event Action ActionPhaseInitiated;
 
     private static int playerTurnID; //0 = localplayer 1 = opponent
     private int numberOfActionTurnsCompleted = 0;
@@ -18,14 +21,26 @@ public class TurnManager : Manager
     public enum TurnPhase
     {
         Priority,
-        Action,
+        Movement,
+        Shooting,       
         Combat
     }
 
     protected override void Start()
     {
         base.Start();
-        gameManager.GetMatchManager.MatchSetup += SetTurnPhaseToPriority;
+
+        if(startWithPriority)
+        {
+            gameManager.GetMatchManager.MatchSetup += SetTurnPhaseToPriority;
+        }
+        else
+        {
+            turnPhase = TurnPhase.Movement;
+            SetPlayerWhoWinsPriority(0);
+        }
+
+        
     }
 
     #region Priority
@@ -39,17 +54,18 @@ public class TurnManager : Manager
     public void SetPlayerWhoWinsPriority(int winnerIndex)
     {
         playerTurnID = winnerIndex;
-        turnPhase = TurnPhase.Action;
+        turnPhase = TurnPhase.Movement;
         numberOfActionTurnsCompleted = 0;
 
-        UpdateToPlayerTurn(playerTurnID);
+        if(UpdateToPlayerTurn != null)
+            UpdateToPlayerTurn(playerTurnID);
     }
 
     #endregion
 
     #region Action Phase
 
-    public void EndPlayersActionTurn()
+    public void EndPlayersTurn()
     {
         gameManager.GetPhotonView.RPC("UpdateTurnAndPhase", PhotonTargets.All);
         Debug.Log("End Turn");
@@ -58,41 +74,68 @@ public class TurnManager : Manager
     [PunRPC]
     private void UpdateTurnAndPhase()
     {
-        if(turnPhase == TurnPhase.Action)
+        if(turnPhase == TurnPhase.Movement || turnPhase == TurnPhase.Shooting)
         {
             numberOfActionTurnsCompleted++;
-            if(numberOfActionTurnsCompleted > 2)
+
+            if(numberOfActionTurnsCompleted == 2)
             {
-                Debug.Log("Combat Phase");                
-                numberOfActionTurnsCompleted = 0;
-                InitiateCombatPhase();
+                DetermineTheStateOfMovementAndShootingPhases();             
             }
             else
             {
-                string endTurnMessage = "";              
-                
-                playerTurnID = playerTurnID == 0 ? 1 : 0; 
-                
-                if(playerTurnID == 0)
-                {
-                    endTurnMessage = "Your Action Turn!";
-                }
-                else
-                {
-                    endTurnMessage = $"Action Turn - {gameManager.GetMatchManager.OpponentName}";
-                }
-
-                gameManager.GetMatchManager.TriggerMatchMessage(endTurnMessage);
-                UpdateToPlayerTurn(playerTurnID);
+                ShiftTurnIntoPlayersControl();
             }
         }
-
-        if(turnPhase == TurnPhase.Combat)
+        else if(turnPhase == TurnPhase.Combat)
         {
+            
+        }       
+    }
 
+    private void DetermineTheStateOfMovementAndShootingPhases()
+    {
+        if (turnPhase == TurnPhase.Movement)
+        {
+            InitiateShootingPhase();
+            ShiftTurnIntoPlayersControl();
+        }
+        else if (turnPhase == TurnPhase.Shooting)
+        {
+            InitiateCombatPhase();
         }
 
-        Debug.Log("Turn Updated");
+        numberOfActionTurnsCompleted = 0;
+    }
+
+    private void ShiftTurnIntoPlayersControl()
+    {
+        string endTurnMessage = "";
+        string phaseType = turnPhase == TurnPhase.Movement ? "Movement" : "Shooting";
+
+        playerTurnID = playerTurnID == 0 ? 1 : 0;
+
+        if (playerTurnID == 0)
+        {
+            endTurnMessage = $"Your {phaseType} Turn!";
+        }
+        else
+        {
+            endTurnMessage = $"{phaseType} Turn - {gameManager.GetMatchManager.OpponentName}";
+        }
+
+        gameManager.GetMatchManager.TriggerMatchMessage(endTurnMessage);
+        UpdateToPlayerTurn(playerTurnID);
+    }
+
+
+    #endregion
+
+    #region ShootingPhase
+
+    private void InitiateShootingPhase()
+    {
+        turnPhase = TurnPhase.Shooting;      
     }
 
     #endregion
@@ -102,6 +145,7 @@ public class TurnManager : Manager
     private void InitiateCombatPhase()
     {
         turnPhase = TurnPhase.Combat;
+        CombatPhaseInitiated();
         gameManager.GetMatchManager.TriggerMatchMessage("Combat Phase!");
     }
 
