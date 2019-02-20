@@ -4,9 +4,7 @@ using UnityEngine;
 using System;
 
 public class CharacterAction : CharacterComponent
-{
-    public event Action CharacterActionPerformed;
-
+{  
     protected Camera playerCamera;
 
     protected bool hasPerformedAction;
@@ -35,27 +33,20 @@ public class CharacterAction : CharacterComponent
 
     protected virtual void CharacterDeselectedByPlayer()
     {
-        characterView.GetPlayerView.GetPlayerInput.PlayerCancelled -= CancelAction;
-    }
-    
-    protected virtual void IntiateAction()
-    {
-        characterView.InitiatedCharacterAction();
-    }
+        //characterView.GetPlayerView.GetPlayerInput.PlayerCancelled -= CancelAction;
+    } 
 
     public virtual void CancelAction()
     {
         if(actionState == ActionState.InProgress)
         {
-            characterView.CancelledOrPerformedCharacterAction();
+            //characterView.CancelledOrPerformedCharacterAction();
         }        
     }
 
     protected virtual void ActionCompleted()
     {
         hasPerformedAction = true;
-
-        if (CharacterActionPerformed != null)
-            CharacterActionPerformed();
+        characterView.CharacterActionPerformedByPlayer();
     }
 }

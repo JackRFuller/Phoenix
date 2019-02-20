@@ -31,12 +31,12 @@ public class UICharacterActions : UIPlayerComponent
 
         HideCharacterActionButtons();
 
-        uiView.GetPlayerView.GetPlayerInteraction.PlayerSelectedCharacter += CharacterSelected;
-        uiView.GetPlayerView.GetPlayerInteraction.PlayerRemovedSelectionCharacter += CharacterDeSelected;
+        //uiView.GetPlayerView.GetPlayerInteraction.PlayerSelectedCharacter += CharacterSelected;
+        //uiView.GetPlayerView.GetPlayerInteraction.PlayerRemovedSelectionCharacter += CharacterDeSelected;
 
-        //Subscribe to Event To Hide and Show UI During Combat
-        uiView.GetPlayerView.GetPlayerShootEvent.CombatEventBeginning += HideCharacterActionButtons;
-        uiView.GetPlayerView.GetPlayerShootEvent.CombatEventEnded += ShowCharacterActionButtons;
+        ////Subscribe to Event To Hide and Show UI During Combat
+        //uiView.GetPlayerView.GetPlayerShootEvent.CombatEventBeginning += HideCharacterActionButtons;
+        //uiView.GetPlayerView.GetPlayerShootEvent.CombatEventEnded += ShowCharacterActionButtons;
     }
 
     #endregion
@@ -47,8 +47,8 @@ public class UICharacterActions : UIPlayerComponent
 
         if(characterView.GetPhotonView.isMine)
         {
-            characterView.GetCharacterMovement.CharacterActionPerformed += UpdateCharacterActionButtons;
-            characterView.GetCharacterShooting.CharacterActionPerformed += UpdateCharacterActionButtons;
+            //characterView.GetCharacterMovement.CharacterActionPerformed += UpdateCharacterActionButtons;
+            //characterView.GetCharacterShooting.CharacterActionPerformed += UpdateCharacterActionButtons;
 
             ShowCharacterActionButtons();
             UpdateCharacterActionButtons();
@@ -61,8 +61,8 @@ public class UICharacterActions : UIPlayerComponent
 
     private void CharacterDeSelected()
     {
-        characterView.CharacterActionCancelledOrPerformed -= UpdateCharacterActionButtons;
-        characterView.GetCharacterShooting.CharacterActionPerformed -= UpdateCharacterActionButtons;
+        //characterView.CharacterActionCancelledOrPerformed -= UpdateCharacterActionButtons;
+        //characterView.GetCharacterShooting.CharacterActionPerformed -= UpdateCharacterActionButtons;
 
         HideCharacterActionButtons();
     }

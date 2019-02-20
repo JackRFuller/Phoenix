@@ -11,6 +11,7 @@ public class UIBattleLog : MonoBehaviour
 
     [Header("Battle Log Message Icons")]
     [SerializeField] private Sprite[] battleLogIcons;
+    [SerializeField] private Image battleLogBGImage;
 
     private int numberOfRecievedMessages;
 
@@ -27,10 +28,15 @@ public class UIBattleLog : MonoBehaviour
             battleLog[battleLogEntry].battleLogMessageIconImage.enabled = false;
             battleLog[battleLogEntry].battleLogMessageText.enabled = false;
         }
+
+        battleLogBGImage.enabled = false;
     }
 
     private void UpdateBattleLog(int messageType, string message)
     {   
+        if(!battleLogBGImage.enabled)
+            battleLogBGImage.enabled = true;
+
         for (int battleLogEntry = battleLog.Count -1; battleLogEntry > 0; battleLogEntry--)
         {
             battleLog[battleLogEntry].battleLogMessageIconImage.sprite = battleLog[battleLogEntry - 1].battleLogMessageIconImage.sprite;

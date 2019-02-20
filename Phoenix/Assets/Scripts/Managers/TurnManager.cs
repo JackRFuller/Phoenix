@@ -53,12 +53,15 @@ public class TurnManager : Manager
     
     public void SetPlayerWhoWinsPriority(int winnerIndex)
     {
-        playerTurnID = winnerIndex;
-        turnPhase = TurnPhase.Movement;
+        playerTurnID = winnerIndex;       
         numberOfActionTurnsCompleted = 0;
+
+        InitiateMovementPhase();
 
         if(UpdateToPlayerTurn != null)
             UpdateToPlayerTurn(playerTurnID);
+
+        
     }
 
     #endregion
@@ -128,6 +131,15 @@ public class TurnManager : Manager
         UpdateToPlayerTurn(playerTurnID);
     }
 
+
+    #endregion
+
+    #region Moving Phase
+
+    private void InitiateMovementPhase()
+    {
+        turnPhase = TurnPhase.Movement;
+    }
 
     #endregion
 

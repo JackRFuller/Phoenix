@@ -128,8 +128,6 @@ public class MatchManager : Manager
     [PunRPC]
     public void UpdateBattleLog(int messageType, string message)
     {
-        Debug.Log(message);
-
         if (BattleLogMessage != null)
             BattleLogMessage(messageType, message);
     }

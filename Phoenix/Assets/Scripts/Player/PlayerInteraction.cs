@@ -24,8 +24,8 @@ public class PlayerInteraction : PlayerComponent
     public CharacterMoveHUD GetCharacterMoveHUD { get { return characterMoveHUD; } }
     public CharacterShootHUD GetCharacterShootHUD { get { return characterShootHUD; } }
 
-    private PlayerInteractionState playerInteractionState = PlayerInteractionState.Enabled;
-    private enum PlayerInteractionState
+    private CharacterSelectionState characterSelectionState = CharacterSelectionState.Enabled;
+    private enum CharacterSelectionState
     {
         Enabled,
         Disabled,
@@ -46,11 +46,12 @@ public class PlayerInteraction : PlayerComponent
     // Update is called once per frame
     void Update()
     {
-        if(playerInteractionState == PlayerInteractionState.Enabled)
+        if(characterSelectionState == CharacterSelectionState.Enabled)
         {
-            SelectCharacterInput();
-            RemoveCharacterInput();
-        }       
+            SelectCharacterInput();            
+        }
+
+        RemoveCharacterInput();
     }
 
     #endregion
@@ -80,13 +81,12 @@ public class PlayerInteraction : PlayerComponent
         {
             if (hit.collider.CompareTag("Character"))
             {
-                if (Input.GetMouseButton(0))
+                if (Input.GetMouseButtonDown(0))
                 {
                     if (hit.transform != selectedCharacterTransform || selectedCharacterTransform == null)
                     {
                         AddCharacterToSelection(hit.transform);
-                    }
-                       
+                    }                       
                 }
             }            
         } 
@@ -113,36 +113,34 @@ public class PlayerInteraction : PlayerComponent
         selectedCharacterTransform = characterTransform;
         selectedCharacterView = selectedCharacterTransform.GetComponent<CharacterView>();
 
-        selectedCharacterView.CharacterSelectedByPlayer(playerView);
+        selectedCharacterView.CharacterActionPerformed += CharacterCompletedAction;
 
-        selectedCharacterView.CharacterActionInitiated += DisablePlayerInteraction;
-        selectedCharacterView.CharacterActionCancelledOrPerformed += EnablePlayerInteraction;
+        selectedCharacterView.CharacterSelectedByPlayer(playerView); 
+        
 
         if (PlayerSelectedCharacter != null)
-            PlayerSelectedCharacter(selectedCharacterView);        
+            PlayerSelectedCharacter(selectedCharacterView);
+
+        characterSelectionState = CharacterSelectionState.Disabled;
     }
 
     private void RemoveSelectedCharacter()
     { 
-        selectedCharacterView.CharacterActionInitiated -= DisablePlayerInteraction;
-        selectedCharacterView.CharacterActionCancelledOrPerformed -= EnablePlayerInteraction;
-
         selectedCharacterView.CharacterDeselectedByPlayer();
+
+        selectedCharacterView.CharacterActionPerformed -= CharacterCompletedAction;
 
         selectedCharacterTransform = null;
         selectedCharacterView = null;
 
         if (PlayerRemovedSelectionCharacter != null)
-            PlayerRemovedSelectionCharacter();    
-    }
+            PlayerRemovedSelectionCharacter();
 
-    private void DisablePlayerInteraction()
-    {
-        playerInteractionState = PlayerInteractionState.Disabled;       
-    }
+        characterSelectionState = CharacterSelectionState.Enabled;
+    }   
 
-    private void EnablePlayerInteraction()
+    private void CharacterCompletedAction()
     {
-        playerInteractionState = PlayerInteractionState.Enabled;             
+        RemoveSelectedCharacter();
     }
 }

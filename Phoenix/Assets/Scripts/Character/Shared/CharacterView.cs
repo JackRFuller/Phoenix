@@ -8,9 +8,8 @@ public class CharacterView : MonoBehaviour
     //Actions
     public event Action CharacterSelected;
     public event Action CharacterDeselected;
-
-    public event Action CharacterActionInitiated;
-    public event Action CharacterActionCancelledOrPerformed;
+    
+    public event Action CharacterActionPerformed;
 
     //Character Components
     [SerializeField] private CharacterData characterData;
@@ -59,15 +58,9 @@ public class CharacterView : MonoBehaviour
 
     #endregion
 
-    public void InitiatedCharacterAction()
+    public void CharacterActionPerformedByPlayer()
     {
-        if (CharacterActionInitiated != null)
-            CharacterActionInitiated();
-    }
-
-    public void CancelledOrPerformedCharacterAction()
-    {
-        if (CharacterActionCancelledOrPerformed != null)
-            CharacterActionCancelledOrPerformed();
+        if (CharacterActionPerformed != null)
+            CharacterActionPerformed();
     }
 }

@@ -5,16 +5,14 @@ using RTS_Cam;
 
 public class PlayerView : MonoBehaviour
 {
-    private PhotonView photonView;
-    private PlayerInput playerInput;
+    private PhotonView photonView;  
     private PlayerInteraction playerInteraction;
     private PlayerDiceRoller playerDiceRoller;
     private PlayerShootEvent playerShootEvent;
     private PlayerUI playerUI;
     private RTS_Camera playerCamera;
 
-    public PhotonView GetPhotonView { get { return photonView; } }
-    public PlayerInput GetPlayerInput { get { return playerInput; } }
+    public PhotonView GetPhotonView { get { return photonView; } }  
     public PlayerInteraction GetPlayerInteraction { get { return playerInteraction; } }
     public PlayerShootEvent GetPlayerShootEvent { get { return playerShootEvent; } }
     public PlayerDiceRoller GetPlayerDiceRoller { get { return playerDiceRoller; } }
@@ -23,8 +21,7 @@ public class PlayerView : MonoBehaviour
 
     private void Awake()
     {
-        photonView = GetComponent<PhotonView>();
-        playerInput = GetComponent<PlayerInput>();
+        photonView = GetComponent<PhotonView>();      
         playerCamera = GetComponent<RTS_Camera>();
         playerInteraction = GetComponent<PlayerInteraction>();
         playerDiceRoller = GetComponent<PlayerDiceRoller>();

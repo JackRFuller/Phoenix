@@ -34,7 +34,7 @@ public class CharacterShooting : CharacterAction
     protected override void CharacterSelectedByPlayer()
     {
         base.CharacterSelectedByPlayer();
-        characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterShoot += IntiateAction;
+        //characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterShoot += IntiateAction;
 
         if (characterShootHUD == null)
             characterShootHUD = characterView.GetPlayerView.GetPlayerInteraction.GetCharacterShootHUD;
@@ -43,14 +43,8 @@ public class CharacterShooting : CharacterAction
     protected override void CharacterDeselectedByPlayer()
     {
         base.CharacterDeselectedByPlayer();
-        characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterMove -= IntiateAction;
-    }
-
-    protected override void IntiateAction()
-    {
-        base.IntiateAction();
-        actionState = ActionState.InProgress;        
-    }
+        //characterView.GetPlayerView.GetPlayerUI.GetPlayerUIView.GetCharacterActionsUI.PlayerInitiatedCharacterMove -= IntiateAction;
+    }    
 
     public override void CancelAction()
     {
@@ -103,17 +97,17 @@ public class CharacterShooting : CharacterAction
                         {                           
                             isValidTarget = true;
 
-                            if (characterView.GetPlayerView.GetPlayerInput.SelectInput)
-                            {                                
-                                TurnToFaceTarget();
+                            //if (characterView.GetPlayerView.GetPlayerInput.SelectInput)
+                            //{                                
+                            //    TurnToFaceTarget();
 
-                                if (CharacterShootingAtTarget != null)
-                                    CharacterShootingAtTarget(characterView, targetCharacterView);
+                            //    if (CharacterShootingAtTarget != null)
+                            //        CharacterShootingAtTarget(characterView, targetCharacterView);
 
-                                hasShot = true;
+                            //    hasShot = true;
 
-                                ActionCompleted();
-                            }
+                            //    ActionCompleted();
+                            //}
                         }
                     }
                 }                
